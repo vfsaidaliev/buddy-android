@@ -80,4 +80,6 @@ dependencies {
     // the voice assistant's spare offline recognizer and wake phrase (models are downloaded, not in the APK)
     implementation("net.java.dev.jna:jna:5.13.0@aar")
     implementation("com.alphacephei:vosk-android:0.3.47@aar")
+    // CommandParserTest, FuzzyTest: the voice assistant's offline commands
+    testImplementation("junit:junit:4.13.2")
 }

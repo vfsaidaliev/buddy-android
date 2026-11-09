@@ -141,6 +141,10 @@
             android:name=".VoiceSettingsActivity"
             android:exported="false" />
 
+        <receiver
+            android:name=".ReminderReceiver"
+            android:exported="false" />
+
         <activity
             android:name=".MonitorActivity"
             android:exported="false" />

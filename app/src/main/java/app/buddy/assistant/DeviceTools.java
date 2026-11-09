@@ -480,6 +480,17 @@ final class DeviceTools {
         if (!ensure(Manifest.permission.SEND_SMS)) return noPermission("send SMS", true);
         String answer = ask(svc.getString(R.string.dev_card_sms, who(number), text));
         if (!answer.startsWith("APPROVED")) return "Not sent. " + answer;
+        int r = sendSms(svc, number, text);
+        String to = who(number);
+        return r == SMS_SENT ? "Sent the SMS to " + to + "." : r == SMS_WAITING ? "The phone took the SMS to " + to
+                + " but hasn't said it went out yet (no signal?). It may still send."
+                : "The SMS to " + to + " failed (no service, no SIM or not allowed by the carrier).";
+    }
+
+    static final int SMS_SENT = 0, SMS_WAITING = 1, SMS_FAILED = 2;
+
+    /** Sends an SMS from the SIM and waits up to a minute for the phone to say it went out. No asking here. */
+    static int sendSms(Context svc, String number, String text) throws Exception {
         SmsManager sm = Build.VERSION.SDK_INT >= 31 ? svc.getSystemService(SmsManager.class) : SmsManager.getDefault();
         ArrayList<String> parts = sm.divideMessage(text);
         String action = svc.getPackageName() + ".SMS_SENT." + System.nanoTime();
@@ -501,15 +512,11 @@ final class DeviceTools {
                         android.app.PendingIntent.FLAG_IMMUTABLE | android.app.PendingIntent.FLAG_ONE_SHOT));
             }
             sm.sendMultipartTextMessage(number, null, parts, sent, null);
-            if (!done.await(60, TimeUnit.SECONDS)) {
-                return "The phone took the SMS to " + who(number) + " but hasn't said it went out yet (no signal?). "
-                        + "It may still send.";
-            }
+            if (!done.await(60, TimeUnit.SECONDS)) return SMS_WAITING;
         } finally {
             svc.unregisterReceiver(r);
         }
-        return failed.get() == 0 ? "Sent the SMS to " + who(number) + "."
-                : "The SMS to " + who(number) + " failed (no service, no SIM or not allowed by the carrier).";
+        return failed.get() == 0 ? SMS_SENT : SMS_FAILED;
     }
 
     private String callLog(String number, int limit) throws Exception {
@@ -813,6 +820,11 @@ final class DeviceTools {
     }
 
     private String flashlight(boolean on) {
+        return torch(svc, on);
+    }
+
+    /** The flashlight on or off; what happened, for the agent. */
+    static String torch(Context svc, boolean on) {
         CameraManager cm = svc.getSystemService(CameraManager.class);
         try {
             String pick = null;

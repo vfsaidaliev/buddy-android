@@ -18,7 +18,7 @@ import static app.buddy.assistant.Ui.*;
  * Buddy Full's voice input: listens at once (the assistant gesture, the wake phrase and Settings → Voice open it),
  * shows the words as they come, and hands the command to VoiceCommand. The language switches on this screen.
  */
-public class VoiceActivity extends Screen {
+public class VoiceActivity extends Screen implements VoiceCommand.Host {
     private TextView status, heard;
     private LinearLayout log, langBox;
     private ScrollView logScroll;
@@ -160,9 +160,54 @@ public class VoiceActivity extends Screen {
         else if (code == 51) status.setText(getString(R.string.voice_mic_needed));
     }
 
-    /** A command was heard. */
+    /** A command was heard: done now, or not at all (VoiceCommand). */
     void onHeard(String text) {
         addLine(text, true);
+        VoiceCommand.handle(this, text);
+    }
+
+    // ------------------------------------------------- VoiceCommand.Host
+
+    @Override
+    public android.app.Activity activity() {
+        return this;
+    }
+
+    @Override
+    public String lang() {
+        return lang;
+    }
+
+    @Override
+    public void say(String text) {
+        addLine(text, false);
+        Speaker.say(this, text, lang);
+    }
+
+    @Override
+    public void choose(String question, java.util.List<String> options, Ui.Pick pick) {
+        say(question);
+        LinearLayout box = column(this);
+        for (int i = 0; i < options.size(); i++) {
+            final int at = i;
+            android.widget.Button b = outlinedButton(this, options.get(i), ACCENT_TEXT);
+            b.setOnClickListener(v -> {
+                log.removeView(box);
+                addLine(options.get(at), true);
+                pick.onPick(String.valueOf(at));
+            });
+            LinearLayout.LayoutParams p = full();
+            p.topMargin = dp(this, 6);
+            box.addView(b, p);
+        }
+        log.addView(box, full());
+        logScroll.post(() -> logScroll.fullScroll(View.FOCUS_DOWN));
+    }
+
+    @Override
+    public void confirm(String title, String message, Runnable yes) {
+        Speaker.say(this, title, lang);
+        confirmSheet(this, title, message, VoiceCommand.t(this, lang, R.string.vc_yes), false, yes);
     }
 
     /** A line in the log: what the user said, or what came of it. */

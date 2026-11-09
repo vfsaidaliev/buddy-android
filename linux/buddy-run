@@ -383,6 +383,8 @@ run_claude() {
     win=$(svc_window)
     [ -n "$win" ] && keyenv+=(CLAUDE_CODE_MAX_CONTEXT_TOKENS="$win")
   fi
+  # Buddy Full: a voice command runs now or not at all, so Claude Code doesn't retry a failed connection either
+  [ -e "$S/voice" ] && export CLAUDE_CODE_MAX_RETRIES=0
   cd "$W" && "${keyenv[@]}" claude "${args[@]}" 2>"$S/last-error.log"
 }
 
