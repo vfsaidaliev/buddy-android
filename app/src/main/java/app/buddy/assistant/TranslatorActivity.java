@@ -23,7 +23,7 @@ import static app.buddy.assistant.Ui.*;
  * translation large on the screen. Arabic is shown right to left.
  */
 public class TranslatorActivity extends Screen {
-    private static final String TEXT = "text", VOICE = "voice", DIALOG = "dialog";
+    private static final String M_TEXT = "text", M_VOICE = "voice", M_DIALOG = "dialog";
     private LinearLayout body;
     private String from, to, mode;
     private TextView result, how, status;
@@ -39,7 +39,7 @@ public class TranslatorActivity extends Screen {
         super.onCreate(state);
         from = sp().getString("tr_from", Translate.base(VoicePrefs.lang(this)));
         to = sp().getString("tr_to", "ar".equals(from) ? "ru" : "ar");
-        mode = sp().getString("tr_mode", DIALOG);
+        mode = sp().getString("tr_mode", M_DIALOG);
         LinearLayout root = column(this);
         root.setBackgroundColor(BG);
         root.setFitsSystemWindows(true);
@@ -76,8 +76,8 @@ public class TranslatorActivity extends Screen {
 
     private void render() {
         body.removeAllViews();
-        body.addView(segmented(this, new String[][]{{TEXT, getString(R.string.tr_mode_text)}, {VOICE, getString(R.string.tr_mode_voice)},
-                {DIALOG, getString(R.string.tr_mode_dialog)}}, mode, false, v -> {
+        body.addView(segmented(this, new String[][]{{M_TEXT, getString(R.string.tr_mode_text)}, {M_VOICE, getString(R.string.tr_mode_voice)},
+                {M_DIALOG, getString(R.string.tr_mode_dialog)}}, mode, false, v -> {
             mode = v;
             sp().edit().putString("tr_mode", v).apply();
             render();
@@ -102,7 +102,7 @@ public class TranslatorActivity extends Screen {
         }
 
         status = monoText(this, "", 12, MUTED);
-        if (TEXT.equals(mode)) {
+        if (M_TEXT.equals(mode)) {
             input = new EditText(this);
             input.setTextColor(TEXT);
             input.setHintTextColor(MUTED);
@@ -119,14 +119,14 @@ public class TranslatorActivity extends Screen {
                 if (!s.isEmpty()) translate(s, from, to, false);
             });
             body.addView(go, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(this, 48)));
-        } else if (VOICE.equals(mode)) {
+        } else if (M_VOICE.equals(mode)) {
             body.addView(bigButton(getString(R.string.tr_speak, SpeechInput.languageName(this, tag(from))), () -> listen(from, to)), gap(16));
         } else {
             body.addView(bigButton(getString(R.string.tr_i_speak, SpeechInput.languageName(this, tag(from))), () -> listen(from, to)), gap(16));
             body.addView(bigButton(getString(R.string.tr_they_speak, SpeechInput.languageName(this, tag(to))), () -> listen(to, from)), gap(10));
         }
         body.addView(status, gap(12));
-        result = text(this, "", DIALOG.equals(mode) ? 30 : 22, TEXT);
+        result = text(this, "", M_DIALOG.equals(mode) ? 30 : 22, TEXT);
         result.setTextDirection(View.TEXT_DIRECTION_FIRST_STRONG); // Arabic right to left
         result.setTextIsSelectable(true);
         body.addView(result, gap(8));
