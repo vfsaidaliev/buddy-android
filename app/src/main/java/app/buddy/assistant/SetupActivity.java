@@ -1215,8 +1215,11 @@ public class SetupActivity extends Screen implements Account.Listener, RemoteSes
     /** The bundled components (third_party/ in the repo, packed into the APK) and their licence texts. */
     private void licences() {
         StringBuilder sb = new StringBuilder();
-        for (String f : new String[]{"README.md", "proot-LICENSE.txt", "talloc-LICENSE.txt", "libandroid-shmem-LICENSE.txt"}) {
-            try (java.io.InputStream in = getAssets().open("third_party/" + f)) {
+        // Valkyrie's additions first (graphics, fonts, voices, libraries), then the OFL texts, then Buddy's own
+        for (String f : new String[]{"licenses/VALKYRIE.md", "licenses/OFL-CormorantSC.txt", "licenses/OFL-PTSans.txt",
+                "licenses/OFL-NotoNaskhArabic.txt", "licenses/OFL-NotoSansRunic.txt", "third_party/README.md",
+                "third_party/proot-LICENSE.txt", "third_party/talloc-LICENSE.txt", "third_party/libandroid-shmem-LICENSE.txt"}) {
+            try (java.io.InputStream in = getAssets().open(f)) {
                 java.io.ByteArrayOutputStream o = new java.io.ByteArrayOutputStream();
                 byte[] buf = new byte[8192];
                 int n;
