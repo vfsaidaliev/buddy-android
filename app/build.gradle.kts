@@ -77,4 +77,7 @@ android {
 dependencies {
     implementation("dev.rikka.shizuku:api:13.1.5")
     implementation("dev.rikka.shizuku:provider:13.1.5")
+    // the voice assistant's spare offline recognizer and wake phrase (models are downloaded, not in the APK)
+    implementation("net.java.dev.jna:jna:5.13.0@aar")
+    implementation("com.alphacephei:vosk-android:0.3.47@aar")
 }

@@ -130,6 +130,17 @@
             android:name=".CheckActivity"
             android:exported="false" />
 
+        <!-- Buddy Full: the voice assistant -->
+        <activity
+            android:name=".VoiceActivity"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:taskAffinity="" />
+
+        <activity
+            android:name=".VoiceSettingsActivity"
+            android:exported="false" />
+
         <activity
             android:name=".MonitorActivity"
             android:exported="false" />

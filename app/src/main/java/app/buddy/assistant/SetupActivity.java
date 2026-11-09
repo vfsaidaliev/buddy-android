@@ -348,6 +348,11 @@ public class SetupActivity extends Screen implements Account.Listener, RemoteSes
         ag.addView(navRow(R.drawable.ms_terminal, "GitHub", GitHub.login == null || GitHub.login.isEmpty()
                 ? getString(R.string.github_row_none) : "@" + GitHub.login, GitHub.login != null && !GitHub.login.isEmpty(),
                 GitHubActivity.class), topGap(4));
+        // Buddy Full: the voice assistant
+        ag.addView(navRow(R.drawable.ms_mic, getString(R.string.voice_settings_title), SpeechInput.languageName(this,
+                VoicePrefs.lang(this)) + " · " + getString(VoicePrefs.ONLINE.equals(VoicePrefs.mode(this)) ? R.string.voice_mode_online
+                : VoicePrefs.OFFLINE.equals(VoicePrefs.mode(this)) ? R.string.voice_mode_offline : R.string.voice_mode_auto),
+                true, VoiceSettingsActivity.class), topGap(4));
         addCard(ag);
 
         // ---------------------------------------------------------- phone tools
