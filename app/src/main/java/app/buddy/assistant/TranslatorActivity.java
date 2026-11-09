@@ -62,6 +62,21 @@ public class TranslatorActivity extends Screen {
         render();
     }
 
+    // the wake phrase leaves the microphone to this screen while it's open
+    @Override
+    protected void onStart() {
+        super.onStart();
+        WakeWordService.VoiceActivityOpen.open = true;
+        WakeWordService.voiceOpened();
+    }
+
+    @Override
+    protected void onStop() {
+        WakeWordService.VoiceActivityOpen.open = false;
+        WakeWordService.voiceClosed();
+        super.onStop();
+    }
+
     @Override
     protected void onDestroy() {
         if (SpeechInput.listening()) SpeechInput.cancel();

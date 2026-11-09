@@ -2143,4 +2143,22 @@
     <string name="access_assistant">Цифровой помощник (необязательно)</string>
     <string name="access_assistant_why">Долгое нажатие кнопки питания или жест из угла сразу открывают голосовой ввод. Для «что здесь написано» и «ответь на это сообщение» включите в настройках помощника «Анализ текста на экране» и «Использовать скриншот».</string>
     <string name="access_assistant_how">Приложения по умолчанию → Цифровой помощник → Buddy Full. На некоторых телефонах кнопку питания нужно отдельно назначить на помощника.</string>
+    <!-- Buddy Full: фраза-активатор -->
+    <string name="wake_channel">Фраза-активатор</string>
+    <string name="wake_title">Фраза-активатор</string>
+    <string name="wake_switch">Слушать фразу-активатор</string>
+    <string name="wake_switch_info">Скажите «%1$s», чтобы открыть голосовой ввод, офлайн (Vosk).</string>
+    <string name="wake_warning">Постоянное прослушивание расходует батарею и держит уведомление. Пауза при заряде ниже 15%%, в режиме энергосбережения и во время звонков. После перезагрузки телефона откройте приложение один раз, чтобы активатор запустился снова (так требует Android).</string>
+    <string name="wake_listening">Слушаю «%1$s»</string>
+    <string name="wake_paused">Пауза: %1$s</string>
+    <string name="wake_paused_battery">заряд ниже %1$d%%</string>
+    <string name="wake_paused_saver">включено энергосбережение</string>
+    <string name="wake_paused_call">идёт звонок</string>
+    <string name="wake_paused_voice">открыт голосовой ввод</string>
+    <string name="wake_paused_model">модель Vosk не скачана</string>
+    <string name="wake_turn_off">Выключить</string>
+    <string name="wake_need_model">Сначала скачайте модель Vosk (%1$s) ниже.</string>
+    <string name="wake_not_running">Не запущен: откройте приложение, чтобы запустить.</string>
+    <string name="wake_save">Сохранить</string>
+    <string name="wake_unknown_words">Модель Vosk не знает слов: %1$s. Эту фразу она не услышит, выберите другую.</string>
 </resources>

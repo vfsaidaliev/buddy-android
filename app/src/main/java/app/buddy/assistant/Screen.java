@@ -19,6 +19,13 @@ abstract class Screen extends Activity {
         super.onResume();
         Theme.load(this);
         if (!Theme.key().equals(themeKey)) recreate();
+        // Buddy Full: the wake phrase can only start from the app on screen (after a restart, the first time it's opened)
+        if (WakeWordService.enabled(this) && !WakeWordService.running()) {
+            try {
+                startForegroundService(new android.content.Intent(this, WakeWordService.class));
+            } catch (Exception ignored) {
+            }
+        }
     }
 
     /** Re-apply the theme in place (after a change made on this screen). */

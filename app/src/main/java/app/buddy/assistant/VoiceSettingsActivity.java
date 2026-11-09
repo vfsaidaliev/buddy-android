@@ -145,6 +145,55 @@ public class VoiceSettingsActivity extends Screen {
             for (String l : new String[]{"ru", "ar"}) ml.addView(mlkitRow(l, have.contains(l)), topGap(10));
         });
 
+        // the wake phrase (off by default)
+        body.addView(sectionLabel(this, getString(R.string.wake_title)));
+        body.addView(warning(this, getString(R.string.wake_warning)), full());
+        boolean wake = WakeWordService.enabled(this);
+        body.addView(switchRow(this, getString(R.string.wake_switch), getString(R.string.wake_switch_info,
+                WakeWordService.phrase(this)), wake, on -> {
+            String ph = WakeWordService.phrase(this);
+            if (on && checkSelfPermission(android.Manifest.permission.RECORD_AUDIO) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{android.Manifest.permission.RECORD_AUDIO}, 53);
+            } else if (on && !VoskModels.installed(this, WakeWordService.lang(ph))) {
+                android.widget.Toast.makeText(this, getString(R.string.wake_need_model,
+                        SpeechInput.languageName(this, WakeWordService.lang(ph))), android.widget.Toast.LENGTH_LONG).show();
+            } else {
+                WakeWordService.setEnabled(this, on);
+            }
+            body.postDelayed(this::render, 300);
+        }), topGap(8));
+        if (wake) {
+            String why = WakeWordService.pausedWhy();
+            body.addView(note(!WakeWordService.running() ? getString(R.string.wake_not_running)
+                    : why != null ? getString(R.string.wake_paused, why) : getString(R.string.wake_listening, WakeWordService.phrase(this))));
+        }
+        LinearLayout phraseRow = row(this);
+        phraseRow.setGravity(Gravity.CENTER_VERTICAL);
+        android.widget.EditText phrase = new android.widget.EditText(this);
+        phrase.setText(WakeWordService.phrase(this));
+        phrase.setTextColor(TEXT);
+        phrase.setSingleLine(true);
+        phraseRow.addView(phrase, weight1());
+        Button save = outlinedButton(this, getString(R.string.wake_save), ACCENT_TEXT);
+        save.setOnClickListener(v -> {
+            String p = phrase.getText().toString().trim();
+            if (p.isEmpty()) return;
+            WakeWordService.setPhrase(this, p);
+            if (WakeWordService.enabled(this)) { // listen for the new phrase
+                WakeWordService.setEnabled(this, false);
+                WakeWordService.setEnabled(this, true);
+            }
+            render();
+        });
+        phraseRow.addView(save);
+        body.addView(phraseRow, topGap(8));
+        java.util.List<String> unknown = WakeWordService.unknownWords(this, WakeWordService.phrase(this));
+        if (!unknown.isEmpty()) {
+            TextView u = note(getString(R.string.wake_unknown_words, android.text.TextUtils.join(", ", unknown)));
+            u.setTextColor(ERR);
+            body.addView(u);
+        }
+
         // Vosk, the spare offline recognizer for Russian and English
         body.addView(sectionLabel(this, getString(R.string.voice_vosk)));
         body.addView(note(getString(R.string.voice_vosk_info)));

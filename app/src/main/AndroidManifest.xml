@@ -29,6 +29,9 @@
     <!-- Buddy Full: "All files access", the phone's shared storage as /sdcard in Buddy's Linux and for the file tools -->
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
+    <!-- Buddy Full: the wake phrase listens in a foreground service of the microphone type (WakeWordService) -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
     <!-- Buddy Full: the phone's data and functions (DeviceTools), asked for in the setup guide or on first use -->
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.WRITE_CONTACTS" />
@@ -178,6 +181,11 @@
                 android:name="android.speech"
                 android:resource="@xml/recognizer" />
         </service>
+
+        <service
+            android:name=".WakeWordService"
+            android:exported="false"
+            android:foregroundServiceType="microphone" />
 
         <activity
             android:name=".TranslatorActivity"

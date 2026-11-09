@@ -2263,4 +2263,22 @@
     <string name="access_assistant">Digital assistant (optional)</string>
     <string name="access_assistant_why">The power button\'s long press or the corner swipe opens voice input at once. For \"what does it say here\" and \"reply to this\", also turn on \"Use text from screen\" and \"Use screenshot\" in the assistant\'s settings.</string>
     <string name="access_assistant_how">Default apps → Digital assistant app → Buddy Full. On some phones the power button must also be set to the assistant.</string>
+    <!-- Buddy Full: the wake phrase (WakeWordService) -->
+    <string name="wake_channel">Wake phrase</string>
+    <string name="wake_title">Wake phrase</string>
+    <string name="wake_switch">Listen for the wake phrase</string>
+    <string name="wake_switch_info">Say \"%1$s\" to open voice input, offline (Vosk).</string>
+    <string name="wake_warning">Listening all the time uses the battery and keeps a notification on. It pauses below 15%% battery, in battery saver and during calls. After the phone restarts, open the app once to start it again (Android requires it).</string>
+    <string name="wake_listening">Listening for \"%1$s\"</string>
+    <string name="wake_paused">Paused: %1$s</string>
+    <string name="wake_paused_battery">battery below %1$d%%</string>
+    <string name="wake_paused_saver">battery saver is on</string>
+    <string name="wake_paused_call">a call is on</string>
+    <string name="wake_paused_voice">voice input is open</string>
+    <string name="wake_paused_model">the Vosk model isn\'t downloaded</string>
+    <string name="wake_turn_off">Turn off</string>
+    <string name="wake_need_model">Download the Vosk model (%1$s) below first.</string>
+    <string name="wake_not_running">Not running: open the app to start it.</string>
+    <string name="wake_save">Save</string>
+    <string name="wake_unknown_words">The Vosk model doesn\'t know: %1$s. It won\'t hear this phrase; pick another.</string>
 </resources>
