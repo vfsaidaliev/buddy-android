@@ -241,8 +241,14 @@ final class VoiceCommand {
         }
 
         private void sayReply(String reply) {
-            if (h.activity().isFinishing()) Speaker.say(app, Speaker.clean(reply), lang);
-            else h.say(Speaker.clean(reply));
+            boolean aloud = VoicePrefs.speakReplies(app);
+            if (h.activity().isFinishing()) {
+                if (aloud) Speaker.say(app, Speaker.clean(reply), lang);
+            } else if (aloud) {
+                h.say(Speaker.clean(reply));
+            } else {
+                h.note(Speaker.clean(reply));
+            }
         }
     }
 

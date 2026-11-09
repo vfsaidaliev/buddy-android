@@ -13,6 +13,8 @@ android {
     packaging {
         jniLibs {
             useLegacyPackaging = true
+            // Vosk, sherpa-onnx and ML Kit may each bring the C++ runtime
+            pickFirsts += "**/libc++_shared.so"
         }
     }
     namespace = "app.buddy.assistant"
@@ -73,6 +75,26 @@ android {
     }
 }
 
+// Valkyrie's offline voices: sherpa-onnx (Piper), whose AAR is only on its GitHub releases, not on Maven. It's fetched
+// here once, before anything builds, and must match this SHA-256 (from GitHub's release); it's never committed.
+val sherpaVersion = "1.13.8"
+val sherpaSha256 = "633c24321e06b1fe79feafa03ea16cbc0f8a286641e2da3559bac91bdb13bd96"
+val sherpaAar = file("libs/sherpa-onnx-$sherpaVersion.aar")
+fun sha256(f: File): String = java.security.MessageDigest.getInstance("SHA-256").digest(f.readBytes())
+    .joinToString("") { "%02x".format(it) }
+if (!sherpaAar.exists() || sha256(sherpaAar) != sherpaSha256) {
+    sherpaAar.parentFile.mkdirs()
+    val part = File(sherpaAar.path + ".part")
+    java.net.URI("https://github.com/k2-fsa/sherpa-onnx/releases/download/v$sherpaVersion/sherpa-onnx-$sherpaVersion.aar")
+        .toURL().openStream().use { input -> part.outputStream().use { input.copyTo(it) } }
+    val got = sha256(part)
+    if (got != sherpaSha256) {
+        part.delete()
+        throw GradleException("sherpa-onnx-$sherpaVersion.aar: SHA-256 $got, expected $sherpaSha256")
+    }
+    part.renameTo(sherpaAar)
+}
+
 // Buddy Full: Shizuku's official API (optional at run time: shell_privileged works only with Shizuku running and allowed)
 dependencies {
     implementation("dev.rikka.shizuku:api:13.1.5")
@@ -82,6 +104,10 @@ dependencies {
     implementation("com.alphacephei:vosk-android:0.3.47@aar")
     // the translator offline: Google's ML Kit on the phone (its language packs are downloaded in Settings → Voice)
     implementation("com.google.mlkit:translate:17.0.3")
+    // Piper voices on the phone (sherpa-onnx, fetched above), its Kotlin API's runtime, and .tar.bz2 for the voices
+    implementation(files("libs/sherpa-onnx-$sherpaVersion.aar"))
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:2.0.21")
+    implementation("org.apache.commons:commons-compress:1.27.1")
     // CommandParserTest, FuzzyTest: the voice assistant's offline commands
     testImplementation("junit:junit:4.13.2")
 }

@@ -19,3 +19,6 @@ local.properties
 
 # design exports (kept locally)
 design/
+
+# sherpa-onnx AAR, fetched by app/build.gradle.kts
+app/libs/

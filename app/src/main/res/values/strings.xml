@@ -2281,4 +2281,23 @@
     <string name="wake_not_running">Not running: open the app to start it.</string>
     <string name="wake_save">Save</string>
     <string name="wake_unknown_words">The Vosk model doesn\'t know: %1$s. It won\'t hear this phrase; pick another.</string>
+    <!-- Valkyrie's voice (Speaker, PiperVoices) -->
+    <string name="speak_title">Valkyrie\'s voice</string>
+    <string name="speak_replies">Say the agent\'s replies</string>
+    <string name="speak_replies_info">Replies to voice commands are read aloud.</string>
+    <string name="speak_auto">Auto</string>
+    <string name="speak_system">phone voice %1$s (%2$s)</string>
+    <string name="speak_system_default">the phone\'s default voice</string>
+    <string name="speak_no_eg">no Egyptian voice on this phone</string>
+    <string name="speak_not_egyptian">not an Egyptian accent</string>
+    <string name="speak_pick">Voice</string>
+    <string name="speak_pick_title">Voice: %1$s</string>
+    <string name="speak_listen">Listen</string>
+    <string name="speak_pitch">Pitch</string>
+    <string name="speak_rate">Speed</string>
+    <string name="speak_download_first">download it below</string>
+    <string name="speak_piper_info">Piper voices work offline on the phone. Android doesn\'t say which of its own voices are male: ♂ marks those whose name says so; listen and pick.</string>
+    <string name="speak_sample_ru">Слушаю. Говори коротко.</string>
+    <string name="speak_sample_en">I\'m listening. Keep it short.</string>
+    <string name="speak_sample_ar">أنا سامعك. قول بسرعة.</string>
 </resources>

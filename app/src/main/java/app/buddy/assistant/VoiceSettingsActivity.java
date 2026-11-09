@@ -43,6 +43,9 @@ public class VoiceSettingsActivity extends Screen {
         sv.addView(body);
         root.addView(sv, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1));
         setContentView(root);
+        Speaker.prepare(this, () -> {
+            if (!isFinishing()) render(); // the phone's own voices, once its TTS is up
+        });
     }
 
     @Override
@@ -125,6 +128,14 @@ public class VoiceSettingsActivity extends Screen {
                 });
             }
         }
+
+        // Valkyrie's voice: per language, the voice, its pitch and speed; Piper voices to download
+        body.addView(sectionLabel(this, getString(R.string.speak_title)));
+        body.addView(switchRow(this, getString(R.string.speak_replies), getString(R.string.speak_replies_info),
+                VoicePrefs.speakReplies(this), on -> VoicePrefs.setSpeakReplies(this, on)), full());
+        for (String l : new String[]{"ru", "en", "ar"}) body.addView(voiceBlock(l), topGap(14));
+        body.addView(note(getString(R.string.speak_piper_info)));
+        for (String[] v : PiperVoices.ALL) body.addView(piperRow(v), topGap(10));
 
         // the translator: Arabic variant online, and ML Kit's offline languages
         body.addView(sectionLabel(this, getString(R.string.tr_title)));
@@ -231,6 +242,159 @@ public class VoiceSettingsActivity extends Screen {
             Button dl = outlinedButton(this, getString(R.string.voice_download), ACCENT_TEXT);
             dl.setOnClickListener(v -> {
                 VoskModels.download(this, m[0], new ModelFetch.Progress() {
+                    @Override
+                    public void onProgress(long done, long total) {
+                    }
+
+                    @Override
+                    public void onDone(String error) {
+                        if (error != null && !"cancelled".equals(error) && !isFinishing()) {
+                            android.widget.Toast.makeText(VoiceSettingsActivity.this,
+                                    getString(R.string.voice_download_failed, error), android.widget.Toast.LENGTH_LONG).show();
+                        }
+                        if (!isFinishing()) render();
+                    }
+                });
+                render();
+            });
+            r.addView(dl);
+        }
+        return r;
+    }
+
+    private static String tagOf(String l) {
+        return "ar".equals(l) ? "ar-EG" : "en".equals(l) ? "en-US" : "ru-RU";
+    }
+
+    /** What a language speaks with now, for the screen. */
+    private String voiceLabel(String l) {
+        String c = VoicePrefs.voice(this, l), piper = Speaker.piperFor(this, l);
+        if (piper != null) return "Piper · " + PiperVoices.of(piper)[2] + ("kareem".equals(piper) ? " · " + getString(R.string.speak_not_egyptian) : "");
+        android.speech.tts.Voice v = Speaker.systemVoice(this, l, tagOf(l));
+        String sys = v == null ? getString(R.string.speak_system_default) : getString(R.string.speak_system, v.getName(), v.getLocale().toLanguageTag());
+        if ("ar".equals(l) && v != null && !"EG".equals(v.getLocale().getCountry())) sys += " · " + getString(R.string.speak_no_eg);
+        return ("auto".equals(c) ? getString(R.string.speak_auto) + " · " : "") + sys;
+    }
+
+    private LinearLayout voiceBlock(String l) {
+        LinearLayout b = column(this);
+        b.setPaddingRelative(dp(this, 14), dp(this, 12), dp(this, 14), dp(this, 12));
+        b.setBackground(rounded(this, CARD, 14));
+        b.addView(title(this, SpeechInput.languageName(this, tagOf(l)), 15));
+        b.addView(text(this, voiceLabel(l), 13, MUTED));
+        LinearLayout btns = row(this);
+        Button pick = outlinedButton(this, getString(R.string.speak_pick), ACCENT_TEXT);
+        pick.setOnClickListener(v -> pickVoice(l));
+        btns.addView(pick);
+        Button hear = outlinedButton(this, getString(R.string.speak_listen), ACCENT_TEXT);
+        hear.setOnClickListener(v -> {
+            Speaker.stop();
+            Speaker.say(this, getString("ar".equals(l) ? R.string.speak_sample_ar : "en".equals(l) ? R.string.speak_sample_en
+                    : R.string.speak_sample_ru), tagOf(l));
+        });
+        LinearLayout.LayoutParams hp = wrap();
+        hp.setMarginStart(dp(this, 8));
+        btns.addView(hear, hp);
+        b.addView(btns, topGap(8));
+        b.addView(slider(getString(R.string.speak_pitch), VoicePrefs.pitch(this, l), x -> VoicePrefs.setPitch(this, l, x)), topGap(6));
+        b.addView(slider(getString(R.string.speak_rate), VoicePrefs.rate(this, l), x -> VoicePrefs.setRate(this, l, x)), topGap(2));
+        return b;
+    }
+
+    private interface FloatSet {
+        void set(float v);
+    }
+
+    /** A 0.50 to 1.50 slider with its value. */
+    private LinearLayout slider(String label, float value, FloatSet set) {
+        LinearLayout r = row(this);
+        r.setGravity(Gravity.CENTER_VERTICAL);
+        TextView t = monoText(this, String.format(java.util.Locale.ROOT, "%s %.2f", label, value), 12, MUTED);
+        r.addView(t, new LinearLayout.LayoutParams(dp(this, 110), LinearLayout.LayoutParams.WRAP_CONTENT));
+        android.widget.SeekBar s = new android.widget.SeekBar(this);
+        s.setMax(100);
+        s.setProgress(Math.round((value - 0.5f) * 100));
+        s.setOnSeekBarChangeListener(new android.widget.SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(android.widget.SeekBar sb, int p, boolean user) {
+                float v = 0.5f + p / 100f;
+                t.setText(String.format(java.util.Locale.ROOT, "%s %.2f", label, v));
+                if (user) set.set(v);
+            }
+
+            @Override public void onStartTrackingTouch(android.widget.SeekBar sb) {}
+            @Override public void onStopTrackingTouch(android.widget.SeekBar sb) {}
+        });
+        r.addView(s, weight1());
+        return r;
+    }
+
+    /** Auto, a Piper voice, or one of the phone's own (a male-sounding name is marked; Android doesn't say). */
+    private void pickVoice(String l) {
+        LinearLayout c = column(this);
+        c.addView(title(this, getString(R.string.speak_pick_title, SpeechInput.languageName(this, tagOf(l))), 18));
+        java.util.List<String[]> opts = new java.util.ArrayList<>();
+        opts.add(new String[]{"auto", getString(R.string.speak_auto)});
+        for (String[] v : PiperVoices.ALL) {
+            if (!v[1].equals(l)) continue;
+            boolean have = PiperVoices.installed(this, v[0]);
+            opts.add(new String[]{have ? "piper:" + v[0] : null, "Piper · " + v[2] + ("kareem".equals(v[0])
+                    ? " · " + getString(R.string.speak_not_egyptian) : "") + (have ? "" : " · " + getString(R.string.speak_download_first))});
+        }
+        for (android.speech.tts.Voice v : Speaker.systemVoices(l)) {
+            opts.add(new String[]{"system:" + v.getName(), v.getName() + " (" + v.getLocale().toLanguageTag() + ")"
+                    + (Speaker.soundsMale(v) ? " ♂" : "") + (v.isNetworkConnectionRequired() ? " · online" : "")});
+        }
+        final android.app.Dialog[] d = {null};
+        String cur = VoicePrefs.voice(this, l);
+        for (String[] o : opts) {
+            TextView t = text(this, (o[0] != null && o[0].equals(cur) ? "● " : "○ ") + o[1], 15, o[0] == null ? MUTED : TEXT);
+            t.setPaddingRelative(0, dp(this, 10), 0, dp(this, 10));
+            if (o[0] != null) {
+                t.setBackgroundResource(ripple(this, false));
+                t.setOnClickListener(v -> {
+                    VoicePrefs.setVoice(this, l, o[0]);
+                    if (d[0] != null) d[0].dismiss();
+                    render();
+                });
+            }
+            c.addView(t, full());
+        }
+        ScrollView sv = new ScrollView(this);
+        sv.addView(c);
+        d[0] = bottomSheet(this, sv);
+    }
+
+    private LinearLayout piperRow(String[] v) {
+        LinearLayout r = row(this);
+        r.setGravity(Gravity.CENTER_VERTICAL);
+        LinearLayout t = column(this);
+        t.addView(title(this, "Piper · " + v[2] + " · " + SpeechInput.languageName(this, tagOf(v[1])), 15));
+        TextView st = text(this, "", 13, MUTED);
+        t.addView(st);
+        r.addView(t, weight1());
+        ModelFetch.Job running = PiperVoices.job(v[0]);
+        if (running != null) {
+            st.setText(getString(R.string.voice_downloading, percent(running.done, running.total)));
+            Button cancel = outlinedButton(this, getString(R.string.voice_cancel), MUTED);
+            cancel.setOnClickListener(x -> running.cancel());
+            r.addView(cancel);
+            body.removeCallbacks(tick);
+            body.postDelayed(tick, 1000);
+        } else if (PiperVoices.installed(this, v[0])) {
+            st.setText(getString(R.string.voice_installed, Formatter.formatShortFileSize(this, PiperVoices.size(this, v[0]))));
+            st.setTextColor(OK);
+            Button del = outlinedButton(this, getString(R.string.voice_delete), ERR);
+            del.setOnClickListener(x -> {
+                PiperVoices.delete(this, v[0]);
+                render();
+            });
+            r.addView(del);
+        } else {
+            st.setText(getString(R.string.voice_size_about, v[4]));
+            Button dl = outlinedButton(this, getString(R.string.voice_download), ACCENT_TEXT);
+            dl.setOnClickListener(x -> {
+                PiperVoices.download(this, v[0], new ModelFetch.Progress() {
                     @Override
                     public void onProgress(long done, long total) {
                     }

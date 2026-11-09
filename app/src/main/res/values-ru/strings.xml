@@ -2161,4 +2161,23 @@
     <string name="wake_not_running">Не запущен: откройте приложение, чтобы запустить.</string>
     <string name="wake_save">Сохранить</string>
     <string name="wake_unknown_words">Модель Vosk не знает слов: %1$s. Эту фразу она не услышит, выберите другую.</string>
+    <!-- Голос Валькирии -->
+    <string name="speak_title">Голос Валькирии</string>
+    <string name="speak_replies">Озвучивать ответы агента</string>
+    <string name="speak_replies_info">Ответы на голосовые команды читаются вслух.</string>
+    <string name="speak_auto">Авто</string>
+    <string name="speak_system">голос телефона %1$s (%2$s)</string>
+    <string name="speak_system_default">голос телефона по умолчанию</string>
+    <string name="speak_no_eg">египетского голоса на телефоне нет</string>
+    <string name="speak_not_egyptian">не египетский акцент</string>
+    <string name="speak_pick">Голос</string>
+    <string name="speak_pick_title">Голос: %1$s</string>
+    <string name="speak_listen">Прослушать</string>
+    <string name="speak_pitch">Высота</string>
+    <string name="speak_rate">Темп</string>
+    <string name="speak_download_first">скачайте ниже</string>
+    <string name="speak_piper_info">Голоса Piper работают офлайн на телефоне. Android не сообщает, какие из его голосов мужские: ♂ отмечает те, у которых это видно по названию; прослушайте и выберите.</string>
+    <string name="speak_sample_ru">Слушаю. Говори коротко.</string>
+    <string name="speak_sample_en">I\'m listening. Keep it short.</string>
+    <string name="speak_sample_ar">أنا سامعك. قول بسرعة.</string>
 </resources>

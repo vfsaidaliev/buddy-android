@@ -34,6 +34,41 @@ final class VoicePrefs {
         sp(c).edit().putString("lang", l).apply();
     }
 
+    /** Valkyrie's voice for a language (ru, en, ar): "auto", "piper:<id>" or "system:<name>". */
+    static String voice(Context c, String l) {
+        return sp(c).getString("voice_" + l, "auto");
+    }
+
+    static void setVoice(Context c, String l, String v) {
+        sp(c).edit().putString("voice_" + l, v).apply();
+    }
+
+    /** Low and hard by default. */
+    static float pitch(Context c, String l) {
+        return sp(c).getFloat("pitch_" + l, 0.8f);
+    }
+
+    static float rate(Context c, String l) {
+        return sp(c).getFloat("rate_" + l, 0.95f);
+    }
+
+    static void setPitch(Context c, String l, float v) {
+        sp(c).edit().putFloat("pitch_" + l, v).apply();
+    }
+
+    static void setRate(Context c, String l, float v) {
+        sp(c).edit().putFloat("rate_" + l, v).apply();
+    }
+
+    /** Say the agent's replies to voice commands out loud. */
+    static boolean speakReplies(Context c) {
+        return sp(c).getBoolean("speak_replies", true);
+    }
+
+    static void setSpeakReplies(Context c, boolean on) {
+        sp(c).edit().putBoolean("speak_replies", on).apply();
+    }
+
     /** The voice chat: the last one a voice command went to, and when (see VoiceCommand). */
     static String chat(Context c) {
         return sp(c).getString("chat", null);
