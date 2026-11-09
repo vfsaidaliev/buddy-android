@@ -2114,4 +2114,30 @@
     <string name="vc_radio_done">%1$s: %2$s.</string>
     <string name="vc_radio_shizuku_failed">Через Shizuku не вышло (%1$s).</string>
     <string name="vc_radio_panel">Открыл настройки (%1$s): переключите там.</string>
+    <!-- Buddy Full: переводчик -->
+    <string name="tr_title">Переводчик</string>
+    <string name="tr_open">Открыть переводчик</string>
+    <string name="tr_mode_text">Текст</string>
+    <string name="tr_mode_voice">Голос</string>
+    <string name="tr_mode_dialog">Диалог</string>
+    <string name="tr_swap">Поменять языки</string>
+    <string name="tr_arabic_egyptian">Египетский разговорный</string>
+    <string name="tr_arabic_msa">Литературный (фусха)</string>
+    <string name="tr_arabic_info">Арабский онлайн: по умолчанию египетский разговорный (عامية مصرية); литературный (فصحى) — для официальных текстов.</string>
+    <string name="tr_mlkit_info">Офлайн: Google ML Kit на телефоне (нужны сервисы Google Play). Его арабский — только литературный, и офлайн-перевод это помечает. Английский есть всегда.</string>
+    <string name="tr_mlkit_have">Скачано.</string>
+    <string name="tr_mlkit_have_ar">Скачано · только литературный арабский (египетского офлайн нет).</string>
+    <string name="tr_input_hint">Текст для перевода</string>
+    <string name="tr_translate">Перевести</string>
+    <string name="tr_speak">Говорить (%1$s)</string>
+    <string name="tr_i_speak">Я говорю (%1$s)</string>
+    <string name="tr_they_speak">Собеседник говорит (%1$s)</string>
+    <string name="tr_say_again">Повторить вслух</string>
+    <string name="tr_no_offline">Нет сети, а язык «%1$s» не скачан для офлайн-перевода (Настройки → Голос).</string>
+    <string name="tr_how_online">онлайн · Claude</string>
+    <string name="tr_how_online_eg">онлайн · Claude · египетский разговорный</string>
+    <string name="tr_how_online_msa">онлайн · Claude · литературный арабский (фусха)</string>
+    <string name="tr_how_offline">офлайн</string>
+    <string name="tr_how_offline_msa">офлайн, литературный арабский</string>
+    <string name="tr_chat_line">Перевод: %1$s</string>
 </resources>

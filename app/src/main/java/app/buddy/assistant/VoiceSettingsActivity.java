@@ -126,6 +126,25 @@ public class VoiceSettingsActivity extends Screen {
             }
         }
 
+        // the translator: Arabic variant online, and ML Kit's offline languages
+        body.addView(sectionLabel(this, getString(R.string.tr_title)));
+        Button tr = outlinedButton(this, getString(R.string.tr_open), ACCENT_TEXT);
+        tr.setOnClickListener(v -> startActivity(new Intent(this, TranslatorActivity.class)));
+        body.addView(tr, wrap());
+        body.addView(note(getString(R.string.tr_arabic_info)));
+        body.addView(segmented(this, new String[][]{{"egyptian", getString(R.string.tr_arabic_egyptian)},
+                {"msa", getString(R.string.tr_arabic_msa)}}, Translate.egyptian(this) ? "egyptian" : "msa", false, v -> {
+            Translate.setEgyptian(this, "egyptian".equals(v));
+            render();
+        }), topGap(8));
+        body.addView(note(getString(R.string.tr_mlkit_info)));
+        LinearLayout ml = column(this);
+        body.addView(ml, full());
+        Translate.downloaded(have -> {
+            if (isFinishing()) return;
+            for (String l : new String[]{"ru", "ar"}) ml.addView(mlkitRow(l, have.contains(l)), topGap(10));
+        });
+
         // Vosk, the spare offline recognizer for Russian and English
         body.addView(sectionLabel(this, getString(R.string.voice_vosk)));
         body.addView(note(getString(R.string.voice_vosk_info)));
@@ -175,6 +194,47 @@ public class VoiceSettingsActivity extends Screen {
                         }
                         if (!isFinishing()) render();
                     }
+                });
+                render();
+            });
+            r.addView(dl);
+        }
+        return r;
+    }
+
+    private static final java.util.Set<String> mlkitBusy = new java.util.HashSet<>();
+
+    private LinearLayout mlkitRow(String lang, boolean have) {
+        LinearLayout r = row(this);
+        r.setGravity(Gravity.CENTER_VERTICAL);
+        LinearLayout t = column(this);
+        String tag = "ar".equals(lang) ? "ar" : "ru-RU";
+        t.addView(title(this, "ML Kit · " + SpeechInput.languageName(this, tag), 15));
+        TextView st = text(this, "", 13, MUTED);
+        t.addView(st);
+        r.addView(t, weight1());
+        if (mlkitBusy.contains(lang)) {
+            st.setText(getString(R.string.voice_downloading, ""));
+        } else if (have) {
+            st.setText(getString("ar".equals(lang) ? R.string.tr_mlkit_have_ar : R.string.tr_mlkit_have));
+            st.setTextColor(OK);
+            Button del = outlinedButton(this, getString(R.string.voice_delete), ERR);
+            del.setOnClickListener(v -> Translate.delete(lang, e -> {
+                if (!isFinishing()) render();
+            }));
+            r.addView(del);
+        } else {
+            st.setText(getString(R.string.voice_size_about, "30"));
+            Button dl = outlinedButton(this, getString(R.string.voice_download), ACCENT_TEXT);
+            dl.setOnClickListener(v -> {
+                mlkitBusy.add(lang);
+                Translate.download(lang, e -> {
+                    mlkitBusy.remove(lang);
+                    if (e != null && !isFinishing()) {
+                        android.widget.Toast.makeText(this, getString(R.string.voice_download_failed, e),
+                                android.widget.Toast.LENGTH_LONG).show();
+                    }
+                    if (!isFinishing()) render();
                 });
                 render();
             });

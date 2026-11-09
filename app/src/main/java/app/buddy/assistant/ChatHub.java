@@ -244,6 +244,14 @@ final class ChatHub {
         return send(ses, text, null, prompt, true);
     }
 
+    /**
+     * Buddy Full's translator: the chat shows shown, the agent gets prompt, with no shell, files or web (as in a
+     * rule's run, which this isn't otherwise).
+     */
+    String sendTask(Sessions.Session ses, String shown, String prompt) {
+        return send(ses, shown, null, prompt, false, true);
+    }
+
     private String send(final Sessions.Session ses, String text, List<String> files, String prompt) {
         return send(ses, text, files, prompt, false);
     }

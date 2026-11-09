@@ -2234,4 +2234,30 @@
     <string name="vc_radio_done">%1$s %2$s.</string>
     <string name="vc_radio_shizuku_failed">Shizuku couldn\'t do it (%1$s).</string>
     <string name="vc_radio_panel">Opened the %1$s settings: switch it there.</string>
+    <!-- Buddy Full: the translator (TranslatorActivity, Translate) -->
+    <string name="tr_title">Translator</string>
+    <string name="tr_open">Open the translator</string>
+    <string name="tr_mode_text">Text</string>
+    <string name="tr_mode_voice">Voice</string>
+    <string name="tr_mode_dialog">Conversation</string>
+    <string name="tr_swap">Swap languages</string>
+    <string name="tr_arabic_egyptian">Egyptian colloquial</string>
+    <string name="tr_arabic_msa">Standard (Fusha)</string>
+    <string name="tr_arabic_info">Arabic online: Egyptian colloquial (عامية مصرية) by default; Standard Arabic (فصحى) for official texts.</string>
+    <string name="tr_mlkit_info">Offline: Google ML Kit on the phone (needs Google Play services). Its Arabic is Standard only: offline results say so. English is always there.</string>
+    <string name="tr_mlkit_have">Downloaded.</string>
+    <string name="tr_mlkit_have_ar">Downloaded · Standard Arabic only (no Egyptian offline).</string>
+    <string name="tr_input_hint">Text to translate</string>
+    <string name="tr_translate">Translate</string>
+    <string name="tr_speak">Speak (%1$s)</string>
+    <string name="tr_i_speak">I speak (%1$s)</string>
+    <string name="tr_they_speak">They speak (%1$s)</string>
+    <string name="tr_say_again">Say it again</string>
+    <string name="tr_no_offline">No network, and %1$s isn\'t downloaded for offline translation (Settings → Voice).</string>
+    <string name="tr_how_online">online · Claude</string>
+    <string name="tr_how_online_eg">online · Claude · Egyptian colloquial Arabic</string>
+    <string name="tr_how_online_msa">online · Claude · Standard Arabic (Fusha)</string>
+    <string name="tr_how_offline">offline</string>
+    <string name="tr_how_offline_msa">offline, Standard Arabic</string>
+    <string name="tr_chat_line">Translate: %1$s</string>
 </resources>

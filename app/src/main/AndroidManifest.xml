@@ -146,6 +146,11 @@
             android:exported="false" />
 
         <activity
+            android:name=".TranslatorActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
             android:name=".MonitorActivity"
             android:exported="false" />
 

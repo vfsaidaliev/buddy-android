@@ -33,6 +33,12 @@ final class VoiceCommand {
         /** Shows a line and says it. */
         void say(String text);
 
+        /** Shows a line and says it in another language (a translation). */
+        void sayIn(String text, String lang);
+
+        /** Shows a small line, not said (where a translation came from). */
+        void note(String text);
+
         /** Shows the options; pick gets the chosen one's index ("0", "1"…), nothing if dismissed. */
         void choose(String question, List<String> options, Ui.Pick pick);
 

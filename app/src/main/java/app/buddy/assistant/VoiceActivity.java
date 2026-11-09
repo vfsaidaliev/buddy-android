@@ -185,6 +185,18 @@ public class VoiceActivity extends Screen implements VoiceCommand.Host {
     }
 
     @Override
+    public void sayIn(String text, String inLang) {
+        addLine(text, true);
+        Speaker.say(this, text, inLang);
+    }
+
+    @Override
+    public void note(String text) {
+        TextView l = monoText(this, text, 12, MUTED);
+        log.addView(l, full());
+    }
+
+    @Override
     public void choose(String question, java.util.List<String> options, Ui.Pick pick) {
         say(question);
         LinearLayout box = column(this);
