@@ -481,10 +481,10 @@ final class DeviceTools {
         String answer = ask(svc.getString(R.string.dev_card_sms, who(number), text));
         if (!answer.startsWith("APPROVED")) return "Not sent. " + answer;
         int r = sendSms(svc, number, text);
-        String to = who(number);
-        return r == SMS_SENT ? "Sent the SMS to " + to + "." : r == SMS_WAITING ? "The phone took the SMS to " + to
+        String whom = who(number);
+        return r == SMS_SENT ? "Sent the SMS to " + whom + "." : r == SMS_WAITING ? "The phone took the SMS to " + whom
                 + " but hasn't said it went out yet (no signal?). It may still send."
-                : "The SMS to " + to + " failed (no service, no SIM or not allowed by the carrier).";
+                : "The SMS to " + whom + " failed (no service, no SIM or not allowed by the carrier).";
     }
 
     static final int SMS_SENT = 0, SMS_WAITING = 1, SMS_FAILED = 2;
