@@ -29,6 +29,10 @@ android {
         targetSdk = 36
         versionCode = appVersionCode
         versionName = appVersionName
+        // Valkyrie: arm64 phones only (Buddy's own proot is arm64 only too), for a smaller APK
+        ndk {
+            abiFilters += "arm64-v8a"
+        }
     }
 
     // Release signing comes from environment variables (set as GitHub Actions secrets).
