@@ -1,3 +1,6 @@
+import java.net.URI
+import java.security.MessageDigest
+
 plugins {
     id("com.android.application")
 }
@@ -80,12 +83,12 @@ android {
 val sherpaVersion = "1.13.8"
 val sherpaSha256 = "633c24321e06b1fe79feafa03ea16cbc0f8a286641e2da3559bac91bdb13bd96"
 val sherpaAar = file("libs/sherpa-onnx-$sherpaVersion.aar")
-fun sha256(f: File): String = java.security.MessageDigest.getInstance("SHA-256").digest(f.readBytes())
+fun sha256(f: File): String = MessageDigest.getInstance("SHA-256").digest(f.readBytes())
     .joinToString("") { "%02x".format(it) }
 if (!sherpaAar.exists() || sha256(sherpaAar) != sherpaSha256) {
     sherpaAar.parentFile.mkdirs()
     val part = File(sherpaAar.path + ".part")
-    java.net.URI("https://github.com/k2-fsa/sherpa-onnx/releases/download/v$sherpaVersion/sherpa-onnx-$sherpaVersion.aar")
+    URI("https://github.com/k2-fsa/sherpa-onnx/releases/download/v$sherpaVersion/sherpa-onnx-$sherpaVersion.aar")
         .toURL().openStream().use { input -> part.outputStream().use { input.copyTo(it) } }
     val got = sha256(part)
     if (got != sherpaSha256) {
