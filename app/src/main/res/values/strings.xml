@@ -2260,4 +2260,7 @@
     <string name="tr_how_offline">offline</string>
     <string name="tr_how_offline_msa">offline, Standard Arabic</string>
     <string name="tr_chat_line">Translate: %1$s</string>
+    <string name="access_assistant">Digital assistant (optional)</string>
+    <string name="access_assistant_why">The power button\'s long press or the corner swipe opens voice input at once. For \"what does it say here\" and \"reply to this\", also turn on \"Use text from screen\" and \"Use screenshot\" in the assistant\'s settings.</string>
+    <string name="access_assistant_how">Default apps → Digital assistant app → Buddy Full. On some phones the power button must also be set to the assistant.</string>
 </resources>

@@ -2140,4 +2140,7 @@
     <string name="tr_how_offline">офлайн</string>
     <string name="tr_how_offline_msa">офлайн, литературный арабский</string>
     <string name="tr_chat_line">Перевод: %1$s</string>
+    <string name="access_assistant">Цифровой помощник (необязательно)</string>
+    <string name="access_assistant_why">Долгое нажатие кнопки питания или жест из угла сразу открывают голосовой ввод. Для «что здесь написано» и «ответь на это сообщение» включите в настройках помощника «Анализ текста на экране» и «Использовать скриншот».</string>
+    <string name="access_assistant_how">Приложения по умолчанию → Цифровой помощник → Buddy Full. На некоторых телефонах кнопку питания нужно отдельно назначить на помощника.</string>
 </resources>

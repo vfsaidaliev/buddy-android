@@ -188,6 +188,34 @@ final class FullAccess {
         }
     };
 
+    /** The digital assistant (optional): the power button / corner swipe opens voice input, which sees the screen. */
+    static final Item ASSISTANT = new Item(R.string.access_assistant, R.string.access_assistant_why) {
+        @Override
+        boolean granted(Context c) {
+            String vis = Settings.Secure.getString(c.getContentResolver(), "voice_interaction_service");
+            return vis != null && vis.startsWith(c.getPackageName() + "/");
+        }
+
+        @Override
+        boolean optional() {
+            return true;
+        }
+
+        @Override
+        String status(Context c) {
+            return granted(c) ? null : c.getString(R.string.access_assistant_how);
+        }
+
+        @Override
+        void request(Activity a) {
+            try {
+                a.startActivity(new Intent(Settings.ACTION_MANAGE_DEFAULT_APPS_SETTINGS));
+            } catch (Exception e) {
+                a.startActivity(new Intent(Settings.ACTION_VOICE_INPUT_SETTINGS));
+            }
+        }
+    };
+
     private FullAccess() {
     }
 
@@ -212,6 +240,7 @@ final class FullAccess {
         l.add(WRITE_SETTINGS);
         l.add(DND);
         l.add(SHIZUKU);
+        l.add(ASSISTANT);
         return l;
     }
 

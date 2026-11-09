@@ -47,6 +47,10 @@
 
     <!-- Needed on Android 11+ to see launchable apps for open_app / list_apps -->
     <queries>
+        <!-- Buddy Full: the online speech recognizers that aren't Buddy's own (SpeechInput) -->
+        <intent>
+            <action android:name="android.speech.RecognitionService" />
+        </intent>
         <!-- Buddy Full: whether Shizuku is installed (shell_privileged) -->
         <package android:name="moe.shizuku.privileged.api" />
         <!-- the home app, to fold the bubble panel when Recents or Home opens -->
@@ -144,6 +148,36 @@
         <receiver
             android:name=".ReminderReceiver"
             android:exported="false" />
+
+        <!-- Buddy Full: the digital assistant (Settings → Apps → Default apps → Digital assistant) -->
+        <service
+            android:name=".AssistantService"
+            android:exported="true"
+            android:permission="android.permission.BIND_VOICE_INTERACTION">
+            <meta-data
+                android:name="android.voice_interaction"
+                android:resource="@xml/assistant_service" />
+            <intent-filter>
+                <action android:name="android.service.voice.VoiceInteractionService" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".AssistantSessionService"
+            android:exported="true"
+            android:permission="android.permission.BIND_VOICE_INTERACTION" />
+
+        <service
+            android:name=".AssistantRecognitionService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.speech.RecognitionService" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <meta-data
+                android:name="android.speech"
+                android:resource="@xml/recognizer" />
+        </service>
 
         <activity
             android:name=".TranslatorActivity"

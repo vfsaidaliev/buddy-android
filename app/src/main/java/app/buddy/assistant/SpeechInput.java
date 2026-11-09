@@ -133,8 +133,10 @@ final class SpeechInput {
         main.post(() -> {
             if (id != session) return;
             try {
-                recognizer = onDevice && Build.VERSION.SDK_INT >= 31
-                        ? SpeechRecognizer.createOnDeviceSpeechRecognizer(app) : SpeechRecognizer.createSpeechRecognizer(app);
+                android.content.ComponentName other = onDevice ? null : otherRecognizer(app);
+                recognizer = onDevice && Build.VERSION.SDK_INT >= 31 ? SpeechRecognizer.createOnDeviceSpeechRecognizer(app)
+                        : other != null ? SpeechRecognizer.createSpeechRecognizer(app, other)
+                        : SpeechRecognizer.createSpeechRecognizer(app);
             } catch (Exception e) {
                 fail(id, app.getString(R.string.voice_no_recognizer));
                 return;
@@ -198,6 +200,23 @@ final class SpeechInput {
                     .putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, onDevice);
             recognizer.startListening(i);
         });
+    }
+
+    /**
+     * The phone's online recognizer that isn't Buddy's own: as the digital assistant, Buddy's recognizer becomes the
+     * default one, and asking "the default" would land back here. Google's first.
+     */
+    static android.content.ComponentName otherRecognizer(Context c) {
+        java.util.List<android.content.pm.ResolveInfo> l = c.getPackageManager().queryIntentServices(
+                new Intent(android.speech.RecognitionService.SERVICE_INTERFACE), 0);
+        android.content.ComponentName any = null;
+        for (android.content.pm.ResolveInfo r : l) {
+            if (r.serviceInfo == null || r.serviceInfo.packageName.equals(c.getPackageName())) continue;
+            android.content.ComponentName cn = new android.content.ComponentName(r.serviceInfo.packageName, r.serviceInfo.name);
+            if (r.serviceInfo.packageName.equals("com.google.android.googlequicksearchbox")) return cn;
+            if (any == null || r.serviceInfo.packageName.startsWith("com.google")) any = cn;
+        }
+        return any;
     }
 
     private static String best(Bundle b) {

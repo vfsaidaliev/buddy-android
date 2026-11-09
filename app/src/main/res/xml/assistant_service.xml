@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Buddy Full as the digital assistant (AssistantService) -->
+<voice-interaction-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:recognitionService="app.buddy.assistant.AssistantRecognitionService"
+    android:sessionService="app.buddy.assistant.AssistantSessionService"
+    android:settingsActivity="app.buddy.assistant.VoiceSettingsActivity"
+    android:supportsAssist="true"
+    android:supportsLaunchVoiceAssistFromKeyguard="true"
+    android:supportsLocalInteraction="true" />

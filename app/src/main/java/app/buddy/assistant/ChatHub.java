@@ -252,6 +252,11 @@ final class ChatHub {
         return send(ses, shown, null, prompt, false, true);
     }
 
+    /** Buddy Full's assistant: the user's words shown, the agent gets them with what was on the screen. */
+    String sendWithScreen(Sessions.Session ses, String shown, String prompt, List<String> files) {
+        return send(ses, shown, files, prompt, false, false);
+    }
+
     private String send(final Sessions.Session ses, String text, List<String> files, String prompt) {
         return send(ses, text, files, prompt, false);
     }
