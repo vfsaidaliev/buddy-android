@@ -1953,10 +1953,10 @@
     <string name="chat_rename_hint">Пусто: первое сообщение</string>
     <string name="chat_rename_save">Сохранить</string>
 
-    <!-- Buddy Full: all files and the phone's data and functions (FullAccess, FileTools) -->
+    <!-- Валькирия: all files and the phone's data and functions (FullAccess, FileTools) -->
     <string name="onboarding_phone_title">Файлы и телефон</string>
-    <string name="onboarding_phone_text">Buddy Full умеет работать со всеми вашими файлами и функциями телефона. Разрешите то, чем агенту можно пользоваться; потом это можно изменить в настройках Android.</string>
-    <string name="onboarding_phone_done">У Buddy Full есть весь нужный доступ.</string>
+    <string name="onboarding_phone_text">Валькирия умеет работать со всеми вашими файлами и функциями телефона. Разрешите то, чем агенту можно пользоваться; потом это можно изменить в настройках Android.</string>
+    <string name="onboarding_phone_done">У Валькирия есть весь нужный доступ.</string>
     <string name="access_files">Доступ ко всем файлам</string>
     <string name="access_files_why">Фото, загрузки и документы: агент их читает, а перемещает и удаляет после вашего подтверждения.</string>
     <string name="check_access_bad">Пока не разрешено. %1$s</string>
@@ -2007,7 +2007,7 @@
     <string name="access_shizuku_missing">Не установлен. Установите и запустите Shizuku, чтобы этим пользоваться.</string>
     <string name="access_shizuku_stopped">Shizuku не запущен: запустите его в приложении Shizuku (после каждой перезагрузки заново).</string>
     <string name="access_shizuku_old">Слишком старая версия Shizuku: обновите её.</string>
-    <string name="access_shizuku_denied">Shizuku ещё не разрешил доступ Buddy Full.</string>
+    <string name="access_shizuku_denied">Shizuku ещё не разрешил доступ Валькирия.</string>
     <string name="dev_card_shell">Выполнить с правами ADB (Shizuku)?\n\n%1$s</string>
     <string name="files_card_trash">Переместить в корзину (_Корзина), файлов: %1$d (%2$s)? Их можно будет вернуть.</string>
     <string name="files_card_restore">Вернуть из корзины на прежнее место, файлов: %1$d (%2$s)?</string>
@@ -2016,8 +2016,8 @@
     <string name="dev_card_install">Установить %1$s (%2$s), версия %3$s, %4$s? %5$s</string>
     <string name="dev_install_new">Новое приложение.</string>
     <string name="dev_install_update">Заменит установленную версию %1$s.</string>
-    <string name="dev_card_update">Обновить Buddy Full с %1$s до %2$s?</string>
-    <!-- Buddy Full: голосовой помощник -->
+    <string name="dev_card_update">Обновить Валькирия с %1$s до %2$s?</string>
+    <!-- Валькирия: голосовой помощник -->
     <string name="voice_title">Голос</string>
     <string name="voice_settings_title">Голос</string>
     <string name="voice_mic">Говорить</string>
@@ -2060,7 +2060,7 @@
     <string name="voice_delete">Удалить</string>
     <string name="voice_size_about">Около %1$s МБ</string>
     <string name="voice_download_failed">Не скачалось: %1$s</string>
-    <!-- Buddy Full: голосовые команды -->
+    <!-- Валькирия: голосовые команды -->
     <string name="vc_to_claude">Передаю Claude…</string>
     <string name="vc_no_network">Нет сети, команда не выполнена: %1$s</string>
     <string name="vc_channel">Голосовой помощник</string>
@@ -2114,7 +2114,7 @@
     <string name="vc_radio_done">%1$s: %2$s.</string>
     <string name="vc_radio_shizuku_failed">Через Shizuku не вышло (%1$s).</string>
     <string name="vc_radio_panel">Открыл настройки (%1$s): переключите там.</string>
-    <!-- Buddy Full: переводчик -->
+    <!-- Валькирия: переводчик -->
     <string name="tr_title">Переводчик</string>
     <string name="tr_open">Открыть переводчик</string>
     <string name="tr_mode_text">Текст</string>
@@ -2142,8 +2142,8 @@
     <string name="tr_chat_line">Перевод: %1$s</string>
     <string name="access_assistant">Цифровой помощник (необязательно)</string>
     <string name="access_assistant_why">Долгое нажатие кнопки питания или жест из угла сразу открывают голосовой ввод. Для «что здесь написано» и «ответь на это сообщение» включите в настройках помощника «Анализ текста на экране» и «Использовать скриншот».</string>
-    <string name="access_assistant_how">Приложения по умолчанию → Цифровой помощник → Buddy Full. На некоторых телефонах кнопку питания нужно отдельно назначить на помощника.</string>
-    <!-- Buddy Full: фраза-активатор -->
+    <string name="access_assistant_how">Приложения по умолчанию → Цифровой помощник → Валькирия. На некоторых телефонах кнопку питания нужно отдельно назначить на помощника.</string>
+    <!-- Валькирия: фраза-активатор -->
     <string name="wake_channel">Фраза-активатор</string>
     <string name="wake_title">Фраза-активатор</string>
     <string name="wake_switch">Слушать фразу-активатор</string>
