@@ -43,11 +43,15 @@ final class Tools {
     private final List<AccessibilityNodeInfo> lastNodes = new ArrayList<>();
     private final BrowserTools browser;
     private final PhoneTools phone;
+    private final FileTools files;
+    private final DeviceTools device;
 
     Tools(BuddyService svc) {
         this.svc = svc;
         browser = new BrowserTools(svc);
         phone = new PhoneTools(svc);
+        files = new FileTools(svc);
+        device = new DeviceTools(svc);
     }
 
     // ---------------------------------------------------------------- schema
@@ -275,6 +279,8 @@ final class Tools {
                         .put("timeout_s", intProp("Default 120, max 300")),
                 "package"));
         PhoneTools.list(t); // the clipboard, alarms, sharing, Downloads, status, camera, location
+        FileTools.list(t); // Buddy Full: the phone's shared storage (/sdcard)
+        DeviceTools.list(t); // Buddy Full: contacts, SMS, calls, calendar, camera, settings
         if (Browser.available(svc)) BrowserTools.list(t); // the background browser (Settings)
         return t;
     }
@@ -380,6 +386,8 @@ final class Tools {
         if (step != null) svc.showActivity(step, null);
         if (ACTIONS.contains(name)) svc.runOnMain(() -> svc.marks().clear()); // the screen is about to change
         if (PhoneTools.NAMES.contains(name)) return phone.call(name, a, ruleRun());
+        if (FileTools.NAMES.contains(name)) return files.call(name, a, ruleRun());
+        if (DeviceTools.NAMES.contains(name)) return device.call(name, a, ruleRun());
         switch (name) {
             case "read_screen": return text(readScreen());
             case "tap": return text(tap(a, false));
@@ -525,7 +533,7 @@ final class Tools {
         if (fdroid) return "This Buddy is from F-Droid, which updates it: the user checks for updates in their F-Droid app.";
         return "This is Buddy's F-Droid build, but no F-Droid app installed it (" + (by == null ? "installed from a file" : "installed by " + by)
                 + "), so nothing updates it. Tell the user: install the latest buddy.apk from "
-                + "https://github.com/ghorbelhamdi/buddy-android/releases/latest over it (chats and settings stay, and that one "
+                + "https://github.com/vfsaidaliev/buddy-android/releases/latest over it (chats and settings stay, and that one "
                 + "updates itself), or get Buddy from F-Droid.";
     }
 
@@ -1869,7 +1877,24 @@ final class Tools {
                 copy(in, o);
             }
         }
-        if (!svc.getPackageManager().canRequestPackageInstalls()) {
+        // Buddy Full: Buddy's own card first, with what will be installed (Android's installer asks again after)
+        android.content.pm.PackageManager pm = svc.getPackageManager();
+        android.content.pm.PackageInfo pi = pm.getPackageArchiveInfo(out.getPath(), 0);
+        if (pi == null) return "That file isn't an APK Android can read, so it wasn't opened.";
+        pi.applicationInfo.sourceDir = out.getPath();
+        pi.applicationInfo.publicSourceDir = out.getPath();
+        String label = String.valueOf(pi.applicationInfo.loadLabel(pm));
+        String installed = null;
+        try {
+            installed = pm.getPackageInfo(pi.packageName, 0).versionName;
+        } catch (android.content.pm.PackageManager.NameNotFoundException ignored) {
+        }
+        String what = installed == null ? svc.getString(R.string.dev_install_new)
+                : svc.getString(R.string.dev_install_update, String.valueOf(installed));
+        String answer = svc.askConfirm(svc.getString(R.string.dev_card_install, label, pi.packageName,
+                String.valueOf(pi.versionName), android.text.format.Formatter.formatShortFileSize(svc, out.length()), what), false);
+        if (!answer.startsWith("APPROVED")) return "Not installed. " + answer;
+        if (!pm.canRequestPackageInstalls()) {
             svc.startActivity(new Intent(android.provider.Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
                     android.net.Uri.parse("package:" + svc.getPackageName())).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
             return "Buddy isn't allowed to install apps yet. Android's settings page for that is open now: ask the user to "
@@ -1882,7 +1907,7 @@ final class Tools {
     }
 
     /** Buddy's own updates (see {@link Updates}). */
-    private String updateBuddy(boolean install) {
+    private String updateBuddy(boolean install) throws InterruptedException {
         Updates.Release r;
         try {
             r = Updates.latest();
@@ -1895,6 +1920,9 @@ final class Tools {
             return head + " An update is available. What's new:\n" + r.notes + "\n\nAsk the user if they want it now; "
                     + "if yes, call update_buddy with install=true.";
         }
+        // Buddy Full: Buddy's own card first (Android's installer asks again after)
+        String answer = svc.askConfirm(svc.getString(R.string.dev_card_update, BuildInfo.VERSION, r.version), false);
+        if (!answer.startsWith("APPROVED")) return "Not updated. " + answer;
         svc.showStatus(svc.getString(R.string.tools_status_downloading, r.version));
         String res = Updates.install(svc, r);
         if (Updates.NEEDS_PERMISSION.equals(res)) {

@@ -15,7 +15,7 @@ export RUST_LOG=warn,codex_app_server_transport::transport::remote_control=info 
 pkill -f '[b]in/codex app-server --remote-control' 2>/dev/null && sleep 2
 mkdir -p /root/remote-codex && cd /root/remote-codex || exit 1
 codex app-server --remote-control --listen unix:// \
-  -c 'mcp_servers.phone.url="http://127.0.0.1:8765/mcp"' \
+  -c 'mcp_servers.phone.url="http://127.0.0.1:8775/mcp"' \
   -c 'mcp_servers.phone.bearer_token_env_var="BUDDY_TOKEN"' \
   -c 'mcp_servers.phone.tool_timeout_sec=600' </dev/null &
 server=$!

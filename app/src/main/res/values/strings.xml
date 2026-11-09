@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Every text Buddy shows, in English. Translations: res/values-<language>/strings.xml (see CONTRIBUTING.md). -->
 <resources>
-    <string name="app_name" translatable="false">Buddy</string>
+    <string name="app_name" translatable="false">Buddy Full</string>
     <string name="service_label">Buddy assistant</string>
     <string name="service_description">Shows the Buddy chat bubble and lets the agent you choose (Claude Code, Codex, OpenCode, Antigravity or Grok), running inside Buddy on this phone, read the screen and tap, type and scroll for you. Nothing leaves the phone except what the agent itself sends to its AI service (Anthropic, OpenAI, Google, xAI or your OpenCode model\'s provider).</string>
 
@@ -2072,4 +2072,69 @@
     <string name="chat_rename_title">Rename chat</string>
     <string name="chat_rename_hint">Empty: its first message</string>
     <string name="chat_rename_save">Save</string>
+
+    <!-- Buddy Full: all files and the phone's data and functions (FullAccess, FileTools) -->
+    <string name="onboarding_phone_title">Files and phone</string>
+    <string name="onboarding_phone_text">Buddy Full can work with all your files and the phone\'s own functions. Allow each one you want the agent to use; you can change them later in Android\'s settings.</string>
+    <string name="onboarding_phone_done">Buddy Full has all the access it asks for.</string>
+    <string name="access_files">All files access</string>
+    <string name="access_files_why">Photos, downloads and documents: the agent reads them, and moves or deletes them after you confirm.</string>
+    <string name="check_access_bad">Not allowed yet. %1$s</string>
+    <string name="files_card_move">Move files: %1$d (%2$s) to %3$s?</string>
+    <string name="files_card_delete">Delete for good, files: %1$d (%2$s)? They can\'t be got back.</string>
+    <string name="files_card_more">…and %1$d more</string>
+    <string name="access_contacts">Contacts</string>
+    <string name="access_contacts_why">Find, add and change contacts; deleting asks you first.</string>
+    <string name="access_sms">SMS</string>
+    <string name="access_sms_why">Read your messages, and send one after you confirm its number and text.</string>
+    <string name="access_call_log">Call log</string>
+    <string name="access_call_log_why">See recent and missed calls.</string>
+    <string name="access_phone">Phone calls</string>
+    <string name="access_phone_why">Call a number after you confirm it.</string>
+    <string name="access_calendar">Calendar</string>
+    <string name="access_calendar_why">Read, add and change events; deleting asks you first.</string>
+    <string name="access_camera">Camera</string>
+    <string name="access_camera_why">Take a photo after you confirm it.</string>
+    <string name="access_write_settings">Modify system settings</string>
+    <string name="access_write_settings_why">Brightness and screen timeout, after you confirm each change.</string>
+    <string name="access_dnd">Do Not Disturb access</string>
+    <string name="access_dnd_why">Put the phone on silent, after you confirm it.</string>
+    <string name="access_restricted_hint">If Android greys out SMS or the call log: App info, the ⋮ menu, Allow restricted settings, then try again.</string>
+    <string name="dev_card_sms">Send an SMS to %1$s?\n\n%2$s</string>
+    <string name="dev_card_call">Call %1$s?</string>
+    <string name="dev_card_snapshot">Take a photo with the %1$s camera for the agent?</string>
+    <string name="dev_camera_back">back</string>
+    <string name="dev_camera_front">front</string>
+    <string name="dev_card_contact_delete">Delete contacts: %1$d?</string>
+    <string name="dev_card_event_delete">Delete calendar events: %1$d? A repeating one (↻) goes with all its repeats.</string>
+    <string name="dev_card_setting">Change a system setting: %1$s → %2$s?</string>
+    <string name="dev_setting_brightness">Brightness</string>
+    <string name="dev_setting_timeout">Screen timeout</string>
+    <string name="dev_setting_volume">Volume (%1$s)</string>
+    <string name="dev_setting_ringer">Ringer</string>
+    <string name="dev_value_auto">automatic</string>
+    <string name="dev_value_seconds">%1$d s</string>
+    <string name="dev_ringer_normal">sound</string>
+    <string name="dev_ringer_vibrate">vibrate</string>
+    <string name="dev_ringer_silent">silent</string>
+    <string name="dev_stream_media">media</string>
+    <string name="dev_stream_ring">ringtone</string>
+    <string name="dev_stream_notification">notifications</string>
+    <string name="dev_stream_alarm">alarms</string>
+    <string name="dev_stream_call">calls</string>
+    <string name="access_shizuku">Shizuku (optional)</string>
+    <string name="access_shizuku_why">Commands with ADB\'s rights (install and remove apps, Wi-Fi, Bluetooth and more), each after you confirm it.</string>
+    <string name="access_shizuku_missing">Not installed. Install Shizuku and start it to use this.</string>
+    <string name="access_shizuku_stopped">Shizuku isn\'t running: start it in the Shizuku app (again after every restart).</string>
+    <string name="access_shizuku_old">This Shizuku is too old: update it.</string>
+    <string name="access_shizuku_denied">Shizuku hasn\'t allowed Buddy Full yet.</string>
+    <string name="dev_card_shell">Run with ADB rights (Shizuku)?\n\n%1$s</string>
+    <string name="files_card_trash">Move to the trash (_Корзина), files: %1$d (%2$s)? You can restore them.</string>
+    <string name="files_card_restore">Put back from the trash, files: %1$d (%2$s)?</string>
+    <string name="files_card_empty">Empty the trash for good, files: %1$d (%2$s)? They can\'t be got back.</string>
+    <string name="files_card_empty_older">Delete from the trash for good what\'s been there over %3$d days, files: %1$d (%2$s)? They can\'t be got back.</string>
+    <string name="dev_card_install">Install %1$s (%2$s), version %3$s, %4$s? %5$s</string>
+    <string name="dev_install_new">A new app.</string>
+    <string name="dev_install_update">Replaces the installed version %1$s.</string>
+    <string name="dev_card_update">Update Buddy Full from %1$s to %2$s?</string>
 </resources>

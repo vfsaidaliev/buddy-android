@@ -13,7 +13,7 @@ import java.util.Map;
 
 /**
  * An agent's requests to another service's API with an API key saved in Buddy (Settings → API keys): the agent is
- * pointed at http://127.0.0.1:8765/llm/&lt;service&gt;/a/… (its Anthropic-style address) or …/o/… (its OpenAI-style one),
+ * pointed at http://127.0.0.1:8775/llm/&lt;service&gt;/a/… (its Anthropic-style address) or …/o/… (its OpenAI-style one),
  * with Buddy's per-install token, and this sends each request on with the real key, streaming the reply back. The key
  * stays in Buddy's encrypted storage (Secrets) and never enters Buddy's Linux, so no agent, command or page it reads
  * can see it or send it anywhere.

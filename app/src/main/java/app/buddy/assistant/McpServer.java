@@ -28,7 +28,7 @@ import java.util.concurrent.Executors;
  * Every request must carry "Authorization: Bearer <token>".
  */
 final class McpServer {
-    static final int PORT = 8765;
+    static final int PORT = 8775;
     private static final String TAG = "BuddyMcp";
     private static final String DEFAULT_PROTOCOL = "2025-06-18";
     /** What a client shows its model ahead of the tools: how to work with them, and the rules Buddy enforces anyway. */

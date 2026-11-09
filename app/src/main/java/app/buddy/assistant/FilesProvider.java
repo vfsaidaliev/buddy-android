@@ -16,7 +16,7 @@ import java.io.FileNotFoundException;
  * content://…/capture, and attachments open in a viewer via content://…/a/&lt;id&gt;.
  */
 public class FilesProvider extends ContentProvider {
-    static final String AUTHORITY = "app.buddy.assistant.files";
+    static final String AUTHORITY = BuildInfo.APPLICATION_ID + ".files";
 
     static Uri captureUri() {
         return Uri.parse("content://" + AUTHORITY + "/capture");
@@ -50,6 +50,11 @@ public class FilesProvider extends ContentProvider {
 
     static File captureFile(android.content.Context c) {
         return new File(c.getCacheDir(), "capture.jpg");
+    }
+
+    /** camera_snapshot's photo (Buddy Full); only Buddy itself writes and reads it. */
+    static File snapshotFile(android.content.Context c) {
+        return new File(c.getCacheDir(), "snapshot.jpg");
     }
 
     private File fileFor(Uri uri) {

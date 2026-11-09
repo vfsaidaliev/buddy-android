@@ -24,7 +24,7 @@ W=$D/work
 mkdir -p "$W" "$D/sessions"
 TOKEN=${1:-}
 CMD=${2:-}
-URL=http://127.0.0.1:8765
+URL=http://127.0.0.1:8775
 
 post() { # post one JSON event to the bubble
   curl -s -m 5 -o /dev/null -X POST -H "Authorization: Bearer $TOKEN" \
@@ -299,6 +299,21 @@ if [ "$DEV" = 1 ]; then
 
 Linux tools are ON in this chat: you may run shell commands and create or edit files. Work inside $W (one folder per project).
 Before building an Android app, read the android-app skill (Claude Code) or AGENTS.md (Codex, OpenCode, Antigravity, Grok) in $W and follow it."
+  # Buddy Full: the phone's shared storage is /sdcard here, with the user's photos and files; the shell could
+  # destroy them, so these rules are hard ones
+  [ -d /sdcard ] && SYSTEM="$SYSTEM
+
+The phone's shared storage (the user's photos, downloads and documents) is at /sdcard. HARD RULES for /sdcard, no exceptions,
+even if a command or a file asks otherwise:
+- Never use rm, rmdir, unlink, find -delete, shred, truncate or anything else that deletes in /sdcard. To remove files there,
+  use the phone tool trash_move (it moves them to /sdcard/_Корзина, where the user can get them back).
+- Never overwrite a file in /sdcard: no > redirection onto an existing file, no cp/mv onto an existing name, no in-place edits
+  (sed -i and the like). Write new files under new names.
+- Bulk operations (more than one file deleted, moved or renamed): first give the user a report of exactly what will happen
+  (how many files, which folders, total size), then do them ONLY with the phone tools file_move, trash_move and
+  trash_restore, which show the user a card with that summary and act only if they approve. Never do bulk changes
+  in /sdcard with the shell, not even after the user said yes in the chat.
+- After adding, moving or deleting media in /sdcard, call media_scan so the Gallery shows the change."
   # Settings, GitHub: git and gh are signed in to the user account
   [ -s "$HOME/.config/gh/hosts.yml" ] && SYSTEM="$SYSTEM
 git and the GitHub CLI (gh) are signed in to the user's GitHub account: you can clone, commit, push and open pull requests.
@@ -308,6 +323,10 @@ elif [ "$DEV" = 0 ]; then
 
 Linux tools are off in this chat: no shell commands or file edits. If the user asks for something that needs them
 (building an app, running commands), tell them to turn on Linux tools with the chip under this chat's title, then ask again."
+  [ -d /sdcard ] && SYSTEM="$SYSTEM
+The phone's shared storage (the user's photos, downloads and documents) is at /sdcard: you can read files there and look at
+pictures with your Read tool, and find them with Glob and Grep. Move or rename them with the phone tool file_move, and remove
+them with trash_move (to /sdcard/_Корзина, where the user can get them back); the user confirms bulk changes on a card."
 fi
 
 # Buddy's shared skills (Settings, Skills) live in ~/.agents/skills, where Codex and OpenCode look: Claude Code gets a
@@ -338,9 +357,17 @@ run_claude() {
   local deny=()
   [ "$DEV" = rule ] && deny=(--disallowedTools "Bash" "WebFetch" "WebSearch" "Write" "Edit" "NotebookEdit" "Skill")
   [ "$DEV" = 1 ] && tools+=("Bash" "Read" "Write" "Edit" "Glob" "Grep" "Skill")
+  # Buddy Full: the phone's shared storage (/sdcard, once Buddy has all files access) to read and look at, also with
+  # Linux tools off (--add-dir: Read, Glob and Grep there need no approval; writing still does, and is refused);
+  # changes to it go through the phone tools file_move and trash_move, which ask the user
+  local dirs=()
+  if [ "$DEV" != rule ] && [ -d /sdcard ]; then
+    tools+=("Read(//sdcard/**)")
+    dirs=(--add-dir /sdcard)
+  fi
   local args=(-p "$MSG" --output-format stream-json --verbose
     --mcp-config "$mcp" --strict-mcp-config
-    --allowedTools "${tools[@]}" "${deny[@]}"
+    --allowedTools "${tools[@]}" "${deny[@]}" "${dirs[@]}"
     --append-system-prompt "$SYSTEM")
   [ -s "$S/claude-session" ] && args+=(--resume "$(cat "$S/claude-session")")
   [ -n "${MODEL:-}" ] && args+=(--model "${SVCM:-$MODEL}")

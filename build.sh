@@ -4,12 +4,17 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
+# Buddy Full uses a library (Shizuku's API) that this script can't bring in: it builds with Gradle (GitHub Actions) only.
+echo "build.sh can't build Buddy Full: it needs the Shizuku library. Build it with ./gradlew assembleGithubRelease or in GitHub Actions." >&2
+exit 1
+
 SDK_JAR=${SDK_JAR:-$HOME/android-sdk/android-36/android.jar}
 KEYSTORE=${KEYSTORE:-$HOME/.buddy-keys/release.jks}
 PACKAGE=app.buddy.assistant
 INFO=app/src/main/java/app/buddy/assistant/BuildInfo.java
 VERSION_NAME=$(sed -n 's/.*VERSION = "\(.*\)";/\1/p' "$INFO")
 VERSION_CODE=$(sed -n 's/.*VERSION_CODE = \([0-9]*\);/\1/p' "$INFO")
+APP_ID=$(sed -n 's/.*APPLICATION_ID = "\(.*\)";/\1/p' "$INFO")
 SRC=app/src/main
 FLAVOR=${FLAVOR:-github} # github or fdroid (see app/build.gradle.kts)
 OUT=build
@@ -24,9 +29,11 @@ echo "1/6 Compiling resources"
 aapt2 compile --dir "$SRC/res" -o "$OUT/res.zip"
 
 echo "2/6 Linking resources and manifest"
-# The manifest has no package attribute (Gradle uses `namespace`), so add it for aapt2.
-sed "s|<manifest |<manifest package=\"$PACKAGE\" |" "$SRC/AndroidManifest.xml" > "$OUT/AndroidManifest.xml"
-aapt2 link -I "$SDK_JAR" --manifest "$OUT/AndroidManifest.xml" \
+# The manifest has no package attribute (Gradle uses `namespace`), so add it for aapt2; the installed package
+# name (applicationId) comes from BuildInfo, as in Gradle.
+sed -e "s|<manifest |<manifest package=\"$PACKAGE\" |" -e "s|\${applicationId}|$APP_ID|g" \
+  "$SRC/AndroidManifest.xml" > "$OUT/AndroidManifest.xml"
+aapt2 link -I "$SDK_JAR" --manifest "$OUT/AndroidManifest.xml" --rename-manifest-package "$APP_ID" \
   --min-sdk-version 30 --target-sdk-version 36 \
   --version-code "$VERSION_CODE" --version-name "$VERSION_NAME" \
   -A "$SRC/assets" --java "$OUT/gen" -o "$OUT/base.apk" "$OUT/res.zip"

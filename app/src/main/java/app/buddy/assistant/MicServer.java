@@ -24,7 +24,7 @@ import java.security.SecureRandom;
  * the Terminal is on screen, so nothing in Linux can listen in the background.
  */
 final class MicServer {
-    static final int PORT = 8766;
+    static final int PORT = 8776;
 
     interface Host {
         /** The microphone permission is missing: ask for it on screen. */

@@ -38,11 +38,11 @@ import static app.buddy.assistant.Ui.*;
  * notification (Settings → Update notices), and the sheet that notification opens.
  */
 public final class Updates extends BroadcastReceiver {
-    static final String REPO = "https://github.com/ghorbelhamdi/buddy-android";
+    static final String REPO = "https://github.com/vfsaidaliev/buddy-android";
     /** For the agent (update_buddy), so English; the sheet shows R.string.update_failed_manual instead. */
     static final String MANUAL = "You can also get it at " + REPO + "/releases/latest (buddy.apk), or with Obtainium "
             + "for automatic updates (see " + REPO + "#updating).";
-    private static final String API = "https://api.github.com/repos/ghorbelhamdi/buddy-android/releases/latest";
+    private static final String API = "https://api.github.com/repos/vfsaidaliev/buddy-android/releases/latest";
     private static final String CHANNEL = "updates", ACTION_MUTE = "app.buddy.assistant.MUTE_UPDATES";
     private static final int ID = 3;
     private static final long DAY = 24 * 3600_000L;

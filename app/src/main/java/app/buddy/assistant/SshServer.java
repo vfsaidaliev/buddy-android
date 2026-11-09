@@ -33,7 +33,7 @@ final class SshServer {
         void onSshChanged();
     }
 
-    static final int PORT = 8767;
+    static final int PORT = 8777;
     private static final String CONFIG = "/etc/buddy/sshd_config";
     /** How long a copied command's code works. */
     private static final long CODE_MS = 10 * 60_000;

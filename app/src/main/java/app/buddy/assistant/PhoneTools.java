@@ -93,8 +93,8 @@ final class PhoneTools {
                 Tools.props().put("action", Tools.enumProp("status", "play", "pause", "toggle", "next", "previous", "volume"))
                         .put("volume", Tools.intProp("For volume: 0 to 100 (percent)")),
                 "action"));
-        t.put(Tools.tool("calendar_events", "The events in the phone's calendars between two dates. Buddy asks the user "
-                + "for calendar access the first time.",
+        t.put(Tools.tool("calendar_events", "The events in the phone's calendars between two dates, each with its id "
+                + "(for calendar_event_save and calendar_event_delete). Buddy asks the user for calendar access the first time.",
                 Tools.props().put("from", Tools.strProp("Start date, \"2026-11-02\" (default: today)"))
                         .put("days", Tools.intProp("How many days from there (default 1, max 31)"))));
         t.put(Tools.tool("add_calendar_event", "Open the Calendar app with a new event filled in; the user checks it "
@@ -316,6 +316,14 @@ final class PhoneTools {
         Object r = PhoneToolActivity.run(svc, PhoneToolActivity.PHOTO, null, 180);
         File shot = FilesProvider.captureFile(svc);
         if (!Boolean.TRUE.equals(r) || shot.length() == 0) return text("No photo: the user closed the camera, or it timed out.");
+        return picture(svc, shot, "The user's photo.");
+    }
+
+    /**
+     * A photo for the agent: a copy in this chat's files (which it can open later) and the picture itself, made small
+     * enough to send. what: the line that goes with it.
+     */
+    static JSONObject picture(BuddyService svc, File shot, String what) throws Exception {
         // a copy in this chat's files, which the agent can open later
         String chat = McpServer.CALLER_CHAT.get();
         String saved = null;
@@ -343,7 +351,7 @@ final class PhoneTools {
         return new JSONObject().put("content", new JSONArray()
                 .put(new JSONObject().put("type", "image").put("mimeType", "image/jpeg")
                         .put("data", Base64.encodeToString(jpg.toByteArray(), Base64.NO_WRAP)))
-                .put(new JSONObject().put("type", "text").put("text", "The user's photo." + (saved == null ? ""
+                .put(new JSONObject().put("type", "text").put("text", what + (saved == null ? ""
                         : " Saved as " + saved + "."))));
     }
 
@@ -466,7 +474,8 @@ final class PhoneTools {
         android.content.ContentUris.appendId(ub, end);
         String[] cols = {android.provider.CalendarContract.Instances.TITLE, android.provider.CalendarContract.Instances.BEGIN,
                 android.provider.CalendarContract.Instances.END, android.provider.CalendarContract.Instances.ALL_DAY,
-                android.provider.CalendarContract.Instances.EVENT_LOCATION, android.provider.CalendarContract.Instances.CALENDAR_DISPLAY_NAME};
+                android.provider.CalendarContract.Instances.EVENT_LOCATION, android.provider.CalendarContract.Instances.CALENDAR_DISPLAY_NAME,
+                android.provider.CalendarContract.Instances.EVENT_ID};
         StringBuilder b = new StringBuilder();
         SimpleDateFormat day = new SimpleDateFormat("EEE yyyy-MM-dd", Locale.ENGLISH), hm = new SimpleDateFormat("HH:mm", Locale.ROOT);
         SimpleDateFormat dayUtc = new SimpleDateFormat("EEE yyyy-MM-dd", Locale.ENGLISH);
@@ -482,7 +491,7 @@ final class PhoneTools {
                         .append(allDay ? " (all day)" : " " + hm.format(new Date(s)) + "–" + hm.format(new Date(e)))
                         .append(": ").append(cur.getString(0) == null ? "(no title)" : cur.getString(0));
                 if (cur.getString(4) != null && !cur.getString(4).isEmpty()) b.append(" @ ").append(cur.getString(4));
-                b.append(" [").append(cur.getString(5)).append("]\n");
+                b.append(" [").append(cur.getString(5)).append(", id ").append(cur.getLong(6)).append("]\n");
             }
         }
         String range = day.format(new Date(begin)) + (n > 1 ? " to " + day.format(new Date(end - 1)) : "");
@@ -508,7 +517,7 @@ final class PhoneTools {
     }
 
     /** "2026-11-02 14:30" or "2026-11-02", the phone's time zone; null if neither. */
-    private static Date parseTime(String s) {
+    static Date parseTime(String s) {
         for (String f : new String[]{"yyyy-MM-dd HH:mm", "yyyy-MM-dd'T'HH:mm", "yyyy-MM-dd"}) {
             try {
                 SimpleDateFormat p = new SimpleDateFormat(f, Locale.ROOT);

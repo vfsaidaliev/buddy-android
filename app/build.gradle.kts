@@ -6,6 +6,7 @@ plugins {
 val buildInfo = file("src/main/java/app/buddy/assistant/BuildInfo.java").readText()
 val appVersionName = Regex("""VERSION = "([^"]+)"""").find(buildInfo)!!.groupValues[1]
 val appVersionCode = Regex("""VERSION_CODE = (\d+)""").find(buildInfo)!!.groupValues[1].toInt()
+val appApplicationId = Regex("""APPLICATION_ID = "([^"]+)"""").find(buildInfo)!!.groupValues[1]
 
 android {
     // proot for the built-in Linux ships as native libraries and must be extracted to disk to run
@@ -18,7 +19,7 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "app.buddy.assistant"
+        applicationId = appApplicationId
         minSdk = 30
         targetSdk = 36
         versionCode = appVersionCode
@@ -70,4 +71,10 @@ android {
     buildFeatures {
         buildConfig = false
     }
+}
+
+// Buddy Full: Shizuku's official API (optional at run time: shell_privileged works only with Shizuku running and allowed)
+dependencies {
+    implementation("dev.rikka.shizuku:api:13.1.5")
+    implementation("dev.rikka.shizuku:provider:13.1.5")
 }

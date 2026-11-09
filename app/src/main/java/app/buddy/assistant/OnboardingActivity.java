@@ -26,7 +26,7 @@ import static app.buddy.assistant.Ui.*;
  * sign-in) are detected when the user comes back.
  */
 public class OnboardingActivity extends Screen implements Account.Listener {
-    static final int WELCOME = 0, BRAIN = 1, ACCESS = 2, AGENTS = 3, BACKGROUND = 4, SAFETY = 5, TRY = 6;
+    static final int WELCOME = 0, BRAIN = 1, ACCESS = 2, AGENTS = 3, BACKGROUND = 4, PHONE = 5, SAFETY = 6, TRY = 7;
     private static final int LAST = TRY;
 
     private ScrollView scroll;
@@ -120,6 +120,8 @@ public class OnboardingActivity extends Screen implements Account.Listener {
                 return true;
             case BACKGROUND:
                 return c.getSystemService(PowerManager.class).isIgnoringBatteryOptimizations(c.getPackageName());
+            case PHONE:
+                return FullAccess.allGranted(c);
             default:
                 return false;
         }
@@ -198,6 +200,9 @@ public class OnboardingActivity extends Screen implements Account.Listener {
                 break;
             case BACKGROUND:
                 background(ok);
+                break;
+            case PHONE:
+                phone(ok);
                 break;
             case SAFETY:
                 safety();
@@ -393,8 +398,42 @@ public class OnboardingActivity extends Screen implements Account.Listener {
         if (!ok) {
             primary(getString(R.string.onboarding_allow), v -> startActivity(new Intent(
                     Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, Uri.parse("package:" + getPackageName()))));
-            secondary(getString(R.string.onboarding_skip_for_now), v -> go(SAFETY));
+            secondary(getString(R.string.onboarding_skip_for_now), v -> go(PHONE));
         }
+    }
+
+    /** Buddy Full: all files, and the phone's data and functions (FullAccess), each with its own Allow. */
+    private void phone(boolean ok) {
+        header(R.drawable.ms_description, getString(R.string.onboarding_phone_title),
+                getString(ok ? R.string.onboarding_phone_done : R.string.onboarding_phone_text), ok);
+        for (FullAccess.Item i : FullAccess.all()) {
+            boolean on = i.granted(this);
+            LinearLayout r = row(this);
+            r.setGravity(Gravity.CENTER_VERTICAL);
+            r.setPaddingRelative(dp(this, 14), dp(this, 12), dp(this, 10), dp(this, 12));
+            r.setBackground(outlined(this, CARD, 16, on ? OK : OUTLINE, 1));
+            r.addView(dot(this, on ? OK : CARD2, 10));
+            LinearLayout t = column(this);
+            t.setPaddingRelative(dp(this, 12), 0, dp(this, 8), 0);
+            t.addView(title(this, getString(i.title), 15));
+            String status = on ? null : i.status(this);
+            t.addView(text(this, getString(i.why) + (status != null ? "\n" + status : ""), 13, MUTED));
+            r.addView(t, weight1());
+            if (!on) {
+                Button b = button(this, getString(R.string.onboarding_allow), false);
+                b.setOnClickListener(v -> i.request(this));
+                r.addView(b);
+            }
+            LinearLayout.LayoutParams p = full();
+            p.topMargin = dp(this, 10);
+            body.addView(r, p);
+        }
+        // Android 13+ greys out SMS and the call log for apps installed from a file until the user allows it
+        if (FullAccess.restrictedMissing(this) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            note(getString(R.string.access_restricted_hint));
+            secondary(getString(R.string.onboarding_app_info), v -> openAppInfo(getPackageName()));
+        }
+        if (!ok) secondary(getString(R.string.onboarding_skip_for_now), v -> go(SAFETY));
     }
 
     private void safety() {

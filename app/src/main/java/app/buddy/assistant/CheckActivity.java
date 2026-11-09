@@ -93,6 +93,12 @@ public class CheckActivity extends Screen {
         run(); // again after a fix in Android's settings
     }
 
+    @Override
+    public void onRequestPermissionsResult(int code, String[] perms, int[] res) {
+        super.onRequestPermissionsResult(code, perms, res);
+        run(); // a permission asked for by a Fix (FullAccess)
+    }
+
     private void run() {
         body.removeAllViews();
         body.addView(text(this, getString(R.string.check_running), 14, MUTED), full());
@@ -127,6 +133,22 @@ public class CheckActivity extends Screen {
         r.add(new Result(getString(R.string.check_battery), battery, battery ? null : getString(R.string.check_battery_bad),
                 getString(R.string.check_fix), () -> startActivity(new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
                 Uri.parse("package:" + getPackageName())))));
+
+        // Buddy Full: all files, and the phone's data and functions (the same list as the setup guide's step)
+        for (FullAccess.Item i : FullAccess.all()) {
+            boolean on = i.granted(this);
+            String why = getString(i.why);
+            if (i instanceof FullAccess.RuntimePerm && ((FullAccess.RuntimePerm) i).restricted
+                    && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                why += " " + getString(R.string.access_restricted_hint);
+            }
+            String status = i.status(this);
+            if (status != null) why = status;
+            // an optional one (Shizuku) that isn't installed is no failure, but still says how to set it up
+            boolean ok = i.ok(this);
+            r.add(new Result(getString(i.title), ok, on ? null : ok ? why : getString(R.string.check_access_bad, why),
+                    getString(R.string.check_fix), () -> i.request(this)));
+        }
 
         Runnable openSettings = () -> startActivity(new Intent(this, SetupActivity.class));
         if (!Linux.installed(this)) {
