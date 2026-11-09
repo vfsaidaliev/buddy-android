@@ -67,6 +67,21 @@ public class VoiceSettingsActivity extends Screen {
         open.setOnClickListener(v -> startActivity(new Intent(this, VoiceActivity.class)));
         body.addView(open, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(this, 48)));
 
+        // the digital assistant: power button / corner swipe
+        boolean assistant = FullAccess.ASSISTANT.granted(this);
+        LinearLayout as = row(this);
+        as.setGravity(Gravity.CENTER_VERTICAL);
+        LinearLayout at = column(this);
+        at.addView(title(this, getString(R.string.access_assistant), 15));
+        TextView ast = text(this, assistant ? getString(R.string.voice_assistant_on) : getString(R.string.access_assistant_how), 13,
+                assistant ? OK : MUTED);
+        at.addView(ast);
+        as.addView(at, weight1());
+        Button pickAssistant = outlinedButton(this, getString(R.string.voice_assistant_pick), ACCENT_TEXT);
+        pickAssistant.setOnClickListener(v -> FullAccess.ASSISTANT.request(this));
+        as.addView(pickAssistant);
+        body.addView(as, topGap(12));
+
         body.addView(sectionLabel(this, getString(R.string.voice_mode)));
         body.addView(segmented(this, new String[][]{{VoicePrefs.AUTO, getString(R.string.voice_mode_auto)},
                 {VoicePrefs.ONLINE, getString(R.string.voice_mode_online)},

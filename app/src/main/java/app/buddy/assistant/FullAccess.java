@@ -85,7 +85,11 @@ final class FullAccess {
 
         @Override
         boolean granted(Context c) {
-            for (String p : perms) if (c.checkSelfPermission(p) != PackageManager.PERMISSION_GRANTED) return false;
+            for (String p : perms) {
+                // before Android 13 notifications need no permission
+                if (Manifest.permission.POST_NOTIFICATIONS.equals(p) && android.os.Build.VERSION.SDK_INT < 33) continue;
+                if (c.checkSelfPermission(p) != PackageManager.PERMISSION_GRANTED) return false;
+            }
             return true;
         }
 
@@ -188,6 +192,78 @@ final class FullAccess {
         }
     };
 
+    /** Valkyrie's voice: the microphone, and notifications ("No network, command not done", reminders). */
+    static final Item MIC = new RuntimePerm("mic", R.string.access_mic, R.string.access_mic_why, false,
+            Manifest.permission.RECORD_AUDIO);
+    static final Item NOTIFY = new RuntimePerm("notify", R.string.access_notify, R.string.access_notify_why, false,
+            Manifest.permission.POST_NOTIFICATIONS);
+
+    /** The offline packages for the voice's language: recognition (Vosk, for ru/en) and a Piper voice. */
+    static final Item VOICE_PACKS = new Item(R.string.access_voice_packs, R.string.access_voice_packs_why) {
+        @Override
+        boolean granted(Context c) {
+            return missingPacks(c).isEmpty();
+        }
+
+        @Override
+        boolean optional() {
+            return true;
+        }
+
+        @Override
+        boolean ok(Context c) {
+            return true; // without them it works online, and offline on what Android has: not a fault
+        }
+
+        @Override
+        String status(Context c) {
+            List<String> m = missingPacks(c);
+            return m.isEmpty() ? null : c.getString(R.string.access_voice_packs_missing, android.text.TextUtils.join(", ", m));
+        }
+
+        @Override
+        void request(Activity a) {
+            a.startActivity(new Intent(a, VoiceSettingsActivity.class));
+        }
+    };
+
+    static List<String> missingPacks(Context c) {
+        List<String> out = new ArrayList<>();
+        String lang = Translate.base(VoicePrefs.lang(c));
+        if (!"ar".equals(lang) && !VoskModels.installed(c, lang)) out.add("Vosk " + lang);
+        String piper = PiperVoices.defaultFor(lang);
+        if (piper != null && !PiperVoices.installed(c, piper) && !"ar".equals(lang)) out.add("Piper " + PiperVoices.of(piper)[2]);
+        return out;
+    }
+
+    /** The wake phrase, when it's switched on: is it listening? */
+    static final Item WAKE = new Item(R.string.access_wake, R.string.access_wake_why) {
+        @Override
+        boolean granted(Context c) {
+            return WakeWordService.enabled(c) && WakeWordService.running();
+        }
+
+        @Override
+        boolean optional() {
+            return true;
+        }
+
+        @Override
+        boolean ok(Context c) {
+            return !WakeWordService.enabled(c) || WakeWordService.running();
+        }
+
+        @Override
+        String status(Context c) {
+            return WakeWordService.enabled(c) ? c.getString(R.string.wake_not_running) : c.getString(R.string.access_wake_off);
+        }
+
+        @Override
+        void request(Activity a) {
+            a.startActivity(new Intent(a, VoiceSettingsActivity.class));
+        }
+    };
+
     /** The digital assistant (optional): the power button / corner swipe opens voice input, which sees the screen. */
     static final Item ASSISTANT = new Item(R.string.access_assistant, R.string.access_assistant_why) {
         @Override
@@ -240,7 +316,11 @@ final class FullAccess {
         l.add(WRITE_SETTINGS);
         l.add(DND);
         l.add(SHIZUKU);
+        l.add(MIC);
+        l.add(NOTIFY);
         l.add(ASSISTANT);
+        l.add(VOICE_PACKS);
+        l.add(WAKE);
         return l;
     }
 

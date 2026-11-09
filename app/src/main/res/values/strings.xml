@@ -2306,4 +2306,16 @@
     <string name="persona_harsh_info">Short, stern, soldierly, with a grim northern tone. Never in cards, warnings, translations or messages to others.</string>
     <string name="persona_mat">Swearing</string>
     <string name="persona_mat_info">Russian swearing now and then, in moderation. Never in cards, warnings, translations or messages to others.</string>
+    <string name="access_mic">Microphone</string>
+    <string name="access_mic_why">Voice commands, the translator and the wake phrase.</string>
+    <string name="access_notify">Notifications</string>
+    <string name="access_notify_why">\"No network, command not done\", reminders, and the wake phrase\'s notice.</string>
+    <string name="access_voice_packs">Offline voice packages (optional)</string>
+    <string name="access_voice_packs_why">Recognition and Valkyrie\'s voice without a network, for the voice language.</string>
+    <string name="access_voice_packs_missing">Not downloaded: %1$s (Settings → Voice).</string>
+    <string name="access_wake">Wake phrase (optional)</string>
+    <string name="access_wake_why">Listens for the phrase to open voice input.</string>
+    <string name="access_wake_off">Off.</string>
+    <string name="voice_assistant_on">Valkyrie is the digital assistant.</string>
+    <string name="voice_assistant_pick">Choose</string>
 </resources>

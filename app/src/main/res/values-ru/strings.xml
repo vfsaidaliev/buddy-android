@@ -2186,4 +2186,16 @@
     <string name="persona_harsh_info">Коротко, сурово, по-военному, с мрачной северной интонацией. Никогда — в карточках, предупреждениях, переводах и сообщениях другим людям.</string>
     <string name="persona_mat">Мат</string>
     <string name="persona_mat_info">Иногда русский мат, в меру. Никогда — в карточках, предупреждениях, переводах и сообщениях другим людям.</string>
+    <string name="access_mic">Микрофон</string>
+    <string name="access_mic_why">Голосовые команды, переводчик и фраза-активатор.</string>
+    <string name="access_notify">Уведомления</string>
+    <string name="access_notify_why">«Нет сети, команда не выполнена», напоминания и уведомление фразы-активатора.</string>
+    <string name="access_voice_packs">Офлайн-пакеты голоса (необязательно)</string>
+    <string name="access_voice_packs_why">Распознавание и голос Валькирии без сети для языка голоса.</string>
+    <string name="access_voice_packs_missing">Не скачано: %1$s (Настройки → Голос).</string>
+    <string name="access_wake">Фраза-активатор (необязательно)</string>
+    <string name="access_wake_why">Слушает фразу, чтобы открыть голосовой ввод.</string>
+    <string name="access_wake_off">Выключена.</string>
+    <string name="voice_assistant_on">Валькирия — цифровой помощник.</string>
+    <string name="voice_assistant_pick">Выбрать</string>
 </resources>
