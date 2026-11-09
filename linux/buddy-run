@@ -288,6 +288,11 @@ PERMS=$(cat "$D/permissions.md" 2>/dev/null)
 [ -n "$PERMS" ] && SYSTEM="$SYSTEM
 
 $PERMS"
+# Valkyrie's manner (Settings → Voice), never in a rule's run (that one answers for someone else)
+PERSONA=$(cat "$D/persona.md" 2>/dev/null)
+[ -n "$PERSONA" ] && [ "$DEV" != rule ] && SYSTEM="$SYSTEM
+
+$PERSONA"
 # the background browser (Settings): its tools and when to use them, while it is on; never in a rule run
 BROWSER=0
 [ -e "$D/browser-on" ] && [ "$DEV" != rule ] && BROWSER=1

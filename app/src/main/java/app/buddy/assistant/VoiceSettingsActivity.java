@@ -137,6 +137,13 @@ public class VoiceSettingsActivity extends Screen {
         body.addView(note(getString(R.string.speak_piper_info)));
         for (String[] v : PiperVoices.ALL) body.addView(piperRow(v), topGap(10));
 
+        // Valkyrie's character
+        body.addView(sectionLabel(this, getString(R.string.persona_title)));
+        body.addView(switchRow(this, getString(R.string.persona_harsh), getString(R.string.persona_harsh_info),
+                VoicePrefs.harsh(this), on -> VoicePrefs.setHarsh(this, on)), full());
+        body.addView(switchRow(this, getString(R.string.persona_mat), getString(R.string.persona_mat_info),
+                VoicePrefs.mat(this), on -> VoicePrefs.setMat(this, on)), topGap(4));
+
         // the translator: Arabic variant online, and ML Kit's offline languages
         body.addView(sectionLabel(this, getString(R.string.tr_title)));
         Button tr = outlinedButton(this, getString(R.string.tr_open), ACCENT_TEXT);

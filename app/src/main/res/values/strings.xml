@@ -2300,4 +2300,10 @@
     <string name="speak_sample_ru">Слушаю. Говори коротко.</string>
     <string name="speak_sample_en">I\'m listening. Keep it short.</string>
     <string name="speak_sample_ar">أنا سامعك. قول بسرعة.</string>
+    <!-- Valkyrie's character (Helper.writePersona) -->
+    <string name="persona_title">Character</string>
+    <string name="persona_harsh">Stern character</string>
+    <string name="persona_harsh_info">Short, stern, soldierly, with a grim northern tone. Never in cards, warnings, translations or messages to others.</string>
+    <string name="persona_mat">Swearing</string>
+    <string name="persona_mat_info">Russian swearing now and then, in moderation. Never in cards, warnings, translations or messages to others.</string>
 </resources>

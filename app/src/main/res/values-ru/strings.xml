@@ -2180,4 +2180,10 @@
     <string name="speak_sample_ru">Слушаю. Говори коротко.</string>
     <string name="speak_sample_en">I\'m listening. Keep it short.</string>
     <string name="speak_sample_ar">أنا سامعك. قول بسرعة.</string>
+    <!-- Характер Валькирии -->
+    <string name="persona_title">Характер</string>
+    <string name="persona_harsh">Суровый характер</string>
+    <string name="persona_harsh_info">Коротко, сурово, по-военному, с мрачной северной интонацией. Никогда — в карточках, предупреждениях, переводах и сообщениях другим людям.</string>
+    <string name="persona_mat">Мат</string>
+    <string name="persona_mat_info">Иногда русский мат, в меру. Никогда — в карточках, предупреждениях, переводах и сообщениях другим людям.</string>
 </resources>

@@ -60,6 +60,24 @@ final class VoicePrefs {
         sp(c).edit().putFloat("rate_" + l, v).apply();
     }
 
+    /** Valkyrie's stern character (on by default). */
+    static boolean harsh(Context c) {
+        return sp(c).getBoolean("harsh", true);
+    }
+
+    static void setHarsh(Context c, boolean on) {
+        sp(c).edit().putBoolean("harsh", on).apply();
+    }
+
+    /** Russian swearing, in moderation (on by default). */
+    static boolean mat(Context c) {
+        return sp(c).getBoolean("mat", true);
+    }
+
+    static void setMat(Context c, boolean on) {
+        sp(c).edit().putBoolean("mat", on).apply();
+    }
+
     /** Say the agent's replies to voice commands out loud. */
     static boolean speakReplies(Context c) {
         return sp(c).getBoolean("speak_replies", true);

@@ -59,6 +59,7 @@ final class Helper {
             try {
                 sync(app);
                 writePermissions(app);
+                writePersona(app);
                 Process p = Linux.builder(app, cmd).start();
                 p.getOutputStream().close();
                 // the helper reports through the local server; its own output is only kept for debugging
@@ -112,6 +113,38 @@ final class Helper {
             }
         } catch (IOException e) {
             android.util.Log.w("Buddy", "permissions not written", e);
+        }
+    }
+
+    /** Valkyrie's manner (Settings → Voice: stern character, swearing), which buddy-run adds to the instructions. */
+    static void writePersona(Context c) {
+        boolean harsh = VoicePrefs.harsh(c), mat = VoicePrefs.mat(c);
+        String text = "";
+        if (harsh) {
+            text += "You are Valkyrie (Валькирия). Speak briefly and sternly, like a soldier: no pleasantries, no small "
+                    + "talk, no filler words, with a grim northern tone. Short sentences: orders, reports, facts.\n";
+        }
+        if (mat) {
+            text += "When you reply in Russian you may use Russian swearing (мат) now and then for emphasis: in "
+                    + "moderation, not in every sentence, and never to insult the user without a reason.\n";
+        }
+        if (!text.isEmpty()) {
+            text += "These rules come before the style: be exact, warn about risks, and use confirmation cards as "
+                    + "always. No swearing and none of this stern manner in: what you put in confirm (the card's "
+                    + "summary), warnings, translations, the text of SMS and messages to other people, and anything "
+                    + "else sent or shown to someone other than the user. Those stay plain, polite and exact.\n";
+        }
+        File f = new File(Linux.root(c), "root/.buddy/persona.md");
+        try {
+            if (text.isEmpty()) {
+                f.delete();
+            } else {
+                try (OutputStream o = new FileOutputStream(f)) {
+                    o.write(text.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                }
+            }
+        } catch (IOException e) {
+            android.util.Log.w("Buddy", "persona not written", e);
         }
     }
 
