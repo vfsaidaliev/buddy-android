@@ -503,6 +503,12 @@ public class OnboardingActivity extends Screen implements Account.Listener {
         TextView t = title(this, title, 26);
         t.setPaddingRelative(0, dp(this, 18), 0, dp(this, 6));
         body.addView(t);
+        View knot = new View(this); // Valkyrie: an Urnes interlace under each step's title
+        knot.setBackgroundResource(R.drawable.orn_urnes);
+        knot.setAlpha(0.6f);
+        LinearLayout.LayoutParams kp = new LinearLayout.LayoutParams(dp(this, 160), dp(this, 12));
+        kp.bottomMargin = dp(this, 8);
+        body.addView(knot, kp);
         body.addView(text(this, sub, 16, MUTED));
     }
 

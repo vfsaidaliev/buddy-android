@@ -20,6 +20,11 @@ final class Theme {
     static final String[][] MODES = {{"system", "System"}, {"light", "Light"}, {"dark", "Dark"}};
 
     private static String applied = "";
+    /**
+     * Valkyrie: always dark glossy obsidian, cold silver text, ice-blue accent, dull iron for the quiet parts, red only
+     * for danger. Every pair used for text is at least WCAG AA (4.5:1): text 14.7, muted 6.9, accent 10.1 on cards.
+     */
+    static final boolean OBSIDIAN = true;
 
     private Theme() {
     }
@@ -48,6 +53,7 @@ final class Theme {
     }
 
     static boolean isDark(Context c) {
+        if (OBSIDIAN) return true;
         String m = Prefs.themeMode(c);
         if ("dark".equals(m)) return true;
         if ("light".equals(m)) return false;
@@ -64,7 +70,15 @@ final class Theme {
         if (key.equals(applied)) return false;
         applied = key;
 
-        if (dark) {
+        if (OBSIDIAN) {
+            set(0xFF090A10, 0xFF131623, 0xFF20263A, 0xFF07080D, 0xFF040509);
+            Ui.TEXT = 0xFFE3E9F2;   // cold silver
+            Ui.MUTED = 0xFF97A1B4;  // dull iron
+            Ui.OK = 0xFF7FCFC0;     // icy teal
+            Ui.ERR = 0xFFEF6A60;    // danger only
+            accent = 0xFF8CC8FF;    // ice blue
+            Ui.USER = blend(accent, Ui.BG, 0.18f);
+        } else if (dark) {
             switch (surface) {
                 case "neutral":
                     set(0xFF141414, 0xFF222222, 0xFF383838, 0xFF1C1C1C, 0xFF0B0B0B);

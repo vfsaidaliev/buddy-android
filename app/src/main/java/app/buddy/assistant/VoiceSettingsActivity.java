@@ -367,9 +367,8 @@ public class VoiceSettingsActivity extends Screen {
             }
             c.addView(t, full());
         }
-        ScrollView sv = new ScrollView(this);
-        sv.addView(c);
-        d[0] = bottomSheet(this, sv);
+        d[0] = bottomSheet(this, c);
+        d[0].show();
     }
 
     private LinearLayout piperRow(String[] v) {

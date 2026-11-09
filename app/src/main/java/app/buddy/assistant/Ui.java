@@ -59,9 +59,40 @@ final class Ui {
         return c.getResources().getConfiguration().getLocales().get(0);
     }
 
-    /** Geist at a weight (400…700); falls back to the system font. */
+    /**
+     * Valkyrie's text font: PT Sans (OFL), regular or bold, with Noto Naskh Arabic for Arabic and Noto Sans Runic for
+     * the runes; the system font for anything else.
+     */
     static Typeface sans(Context c, int weight) {
-        return font(c, "fonts/Geist.ttf", weight, weight >= 600 ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
+        return valkyrie(c, weight >= 600 ? R.font.valkyrie_body_bold : R.font.valkyrie_body, weight >= 600 ? 700 : 400,
+                weight >= 600 ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
+    }
+
+    /** Headings: Cormorant SC (OFL), small capitals as if cut in stone. */
+    static Typeface heading(Context c) {
+        return valkyrie(c, R.font.valkyrie_heading, 600, Typeface.DEFAULT_BOLD);
+    }
+
+    private static Typeface valkyrie(Context c, int res, int weight, Typeface fallback) {
+        String k = "valkyrie" + res;
+        Typeface t = FONTS.get(k);
+        if (t == null) {
+            try {
+                android.content.res.Resources r = c.getResources();
+                android.graphics.fonts.FontFamily main = new android.graphics.fonts.FontFamily.Builder(
+                        new android.graphics.fonts.Font.Builder(r, res).setWeight(weight).build()).build();
+                android.graphics.fonts.FontFamily arabic = new android.graphics.fonts.FontFamily.Builder(
+                        new android.graphics.fonts.Font.Builder(r, R.font.valkyrie_arabic).setWeight(weight).build()).build();
+                android.graphics.fonts.FontFamily runic = new android.graphics.fonts.FontFamily.Builder(
+                        new android.graphics.fonts.Font.Builder(r, R.font.valkyrie_runic).build()).build();
+                t = new Typeface.CustomFallbackBuilder(main).addCustomFallback(arabic).addCustomFallback(runic)
+                        .setSystemFallback("sans-serif").build();
+            } catch (Exception e) {
+                t = fallback;
+            }
+            FONTS.put(k, t);
+        }
+        return t;
     }
 
     /** Geist Mono at a weight; falls back to the system monospace. */
@@ -95,7 +126,8 @@ final class Ui {
 
     static TextView title(Context c, String s, int sp) {
         TextView t = text(c, s, sp, TEXT);
-        t.setTypeface(sans(c, 600));
+        // the big titles in Valkyrie's carved capitals; row titles stay in the text font, to be read at a glance
+        t.setTypeface(sp >= 17 ? heading(c) : sans(c, 600));
         return t;
     }
 
@@ -121,7 +153,14 @@ final class Ui {
 
     static GradientDrawable rounded(Context c, int color, int radiusDp) {
         GradientDrawable d = new GradientDrawable();
-        d.setColor(color);
+        if (Theme.OBSIDIAN && (color == CARD || color == CARD2)) {
+            // glossy obsidian: lit at the top left, a blue-violet depth at the bottom right, and a lit edge
+            d.setOrientation(GradientDrawable.Orientation.TL_BR);
+            d.setColors(new int[]{Theme.blend(color, 0xFF4A5680, 0.22f), color, Theme.blend(color, 0xFF1A1030, 0.35f)});
+            d.setStroke(Math.max(1, dp(c, 1) / 2), Theme.withAlpha(0xFFB9C8DE, 0x2E));
+        } else {
+            d.setColor(color);
+        }
         d.setCornerRadius(dp(c, radiusDp));
         return d;
     }
@@ -241,11 +280,23 @@ final class Ui {
     // ------------------------------------------------------------- components
 
     /** 12sp/600 muted ALL CAPS label; padding 20/16/20/4. */
+    /** Valkyrie's runes for the section labels (Elder Futhark), one per section in turn. */
+    private static final String RUNES = "ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛊᛏᛒᛖᛗᛚᛜᛞᛟ";
+
     static TextView sectionLabel(Context c, String s) {
-        TextView t = text(c, s.toUpperCase(locale(c)), 12, MUTED);
-        t.setTypeface(sans(c, 600));
-        t.setLetterSpacing(0.06f);
-        t.setPaddingRelative(dp(c, 20), dp(c, 16), dp(c, 20), dp(c, 4));
+        char rune = RUNES.charAt(Math.abs(s.hashCode()) % RUNES.length());
+        TextView t = text(c, rune + "  " + s.toUpperCase(locale(c)), 13, MUTED);
+        t.setTypeface(heading(c));
+        t.setLetterSpacing(0.08f);
+        t.setPaddingRelative(dp(c, 20), dp(c, 18), dp(c, 20), dp(c, 6));
+        // an Urnes interlace under it, as carved on a rune stone
+        android.graphics.drawable.Drawable knot = c.getDrawable(R.drawable.orn_urnes);
+        if (knot != null) {
+            knot.setAlpha(0x8C);
+            knot.setBounds(0, 0, dp(c, 150), dp(c, 12));
+            t.setCompoundDrawablesRelative(null, null, null, knot);
+            t.setCompoundDrawablePadding(dp(c, 4));
+        }
         return t;
     }
 
@@ -769,8 +820,16 @@ final class Ui {
         handle.setBackground(rounded(a, OUTLINE, 2));
         LinearLayout.LayoutParams hp = new LinearLayout.LayoutParams(dp(a, 32), dp(a, 4));
         hp.gravity = Gravity.CENTER_HORIZONTAL;
-        hp.bottomMargin = dp(a, 14);
+        hp.bottomMargin = dp(a, 6);
         box.addView(handle, hp);
+        // Valkyrie: a Borre ring chain along the top of every sheet
+        View chain = new View(a);
+        chain.setBackgroundResource(R.drawable.orn_borre);
+        chain.setAlpha(0.55f);
+        LinearLayout.LayoutParams cp = new LinearLayout.LayoutParams(dp(a, 160), dp(a, 12));
+        cp.gravity = Gravity.CENTER_HORIZONTAL;
+        cp.bottomMargin = dp(a, 12);
+        box.addView(chain, cp);
         // Long content (e.g. many models) scrolls instead of running off the screen.
         ScrollView scroll = new ScrollView(a);
         scroll.setOverScrollMode(View.OVER_SCROLL_NEVER);
@@ -786,6 +845,12 @@ final class Ui {
             w.setDimAmount(0.55f);
             w.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
             w.setWindowAnimations(android.R.style.Animation_InputMethod);
+            if (android.os.Build.VERSION.SDK_INT >= 31) { // what's behind goes frosted, where the phone allows it
+                w.addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
+                WindowManager.LayoutParams lp = w.getAttributes();
+                lp.setBlurBehindRadius(dp(a, 24));
+                w.setAttributes(lp);
+            }
         }
         return d;
     }

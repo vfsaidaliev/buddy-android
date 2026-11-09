@@ -426,8 +426,16 @@ final class Bubble implements ChatHub.Listener {
         confirmLabel.setLetterSpacing(0.06f);
         confirmLabel.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
         confirmLabel.setTextColor(Ui.ACCENT_TEXT);
-        confirmLabel.setTypeface(Ui.sans(svc, 600));
+        confirmLabel.setTypeface(Ui.heading(svc));
         confirmCard.addView(confirmLabel);
+        // Valkyrie: an Urnes interlace under the card's label
+        View knot = new View(svc);
+        knot.setBackgroundResource(R.drawable.orn_urnes);
+        knot.setAlpha(0.6f);
+        LinearLayout.LayoutParams kp = new LinearLayout.LayoutParams(dp(120), dp(10));
+        kp.topMargin = dp(2);
+        kp.bottomMargin = dp(4);
+        confirmCard.addView(knot, kp);
         confirmText = new TextView(svc);
         confirmText.setTextColor(Ui.TEXT);
         confirmText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
